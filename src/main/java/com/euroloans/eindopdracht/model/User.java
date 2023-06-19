@@ -12,8 +12,6 @@ public class User {
     @Id
     public String username;
 
-    public Users user;
-
     private String password;
 
     @OneToMany(mappedBy = "user")
@@ -22,14 +20,6 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
-    }
 
     public String getUsername() {
         return username;

@@ -8,6 +8,7 @@ public class LoanApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id ;
+
     public String name;
 
     @ManyToOne
