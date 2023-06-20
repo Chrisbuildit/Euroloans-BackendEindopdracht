@@ -32,14 +32,9 @@ public class UserService {
         User newUser = new User();
         newUser.setUsername(userDto.username);
         newUser.setPassword(encoder.encode(userDto.password));
-
-        List<Role> userRoles = new ArrayList<>();
-        for (String rolename : userDto.roles) {
-            Optional<Role> or = roleRepos.findById("ROLE_" + rolename);
-
-            userRoles.add(or.get());
-        }
-        newUser.setRoles(userRoles);
+        //Code gee error
+        Role tempRole = roleRepos.findById("ROLE_" + userDto.rolenameId).orElseThrow(() -> new ResourceNotFoundException("Role not Found"));
+        newUser.setRole(tempRole);
 
         userRepos.save(newUser);
 
@@ -51,8 +46,7 @@ public class UserService {
 
         UserDto userDto = new UserDto();
         userDto.username = t.getUsername();
-        //Figure uit:
-//        userDto.roles = t.getRoles();
+        userDto.rolenameId = t.getRole().getRolename();
 
         return userDto;
     }

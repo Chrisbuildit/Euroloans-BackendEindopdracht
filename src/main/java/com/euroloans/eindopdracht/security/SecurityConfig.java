@@ -54,7 +54,7 @@ public class SecurityConfig  {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/username").permitAll()
-                .requestMatchers("/roles").hasRole("OWNER")
+                .requestMatchers("/roles").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                 .requestMatchers(HttpMethod.POST, "/loanApplications").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.GET, "/loanApplications").permitAll()

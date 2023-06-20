@@ -14,12 +14,12 @@ public class User {
 
     private String password;
 
+    @OneToOne
+    private Role role;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     public List<LoanApplication> loanApplications;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles;
 
     public String getUsername() {
         return username;
@@ -45,11 +45,11 @@ public class User {
         this.password = password;
     }
 
-    public Collection<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
