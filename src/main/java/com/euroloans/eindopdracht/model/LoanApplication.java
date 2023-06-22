@@ -2,6 +2,8 @@ package com.euroloans.eindopdracht.model;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
+
 @Entity
 @Table(name="loanApplications")
 public class LoanApplication {
@@ -11,8 +13,8 @@ public class LoanApplication {
 
     public String name;
 
-    @ManyToOne
-    public User user;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<User> users;
 
     public Long getId() {
         return id;
@@ -30,11 +32,11 @@ public class LoanApplication {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
+    public Collection<User> getUsers() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsers(Collection<User> users) {
+        this.users = users;
     }
 }

@@ -2,10 +2,12 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.RoleDto;
 import com.euroloans.eindopdracht.model.Role;
+import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,9 +24,18 @@ public class RoleService {
         for (Role r : repos.findAll()) {
             RoleDto rdto = new RoleDto();
             rdto.rolename = r.getRolename();
-//            rdto.usernameId = r.getUser().getUsername();
             roleDtos.add(rdto);
         }
+//            rdto.usernameId = r.getUser().getUsername();
+
+//            for (User u : r.getUsers()) {
+//                String[] usernames = new String[u.getUsername().length()];
+//                rdto.usernameId = Arrays.fill(usernames,u.getUsername());
+//            }
+//        }
+//            roleDtos.add(rdto);
+//        }
+
         return roleDtos;
     }
 }

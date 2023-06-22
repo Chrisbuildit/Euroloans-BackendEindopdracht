@@ -32,7 +32,7 @@ public class UserService {
         User newUser = new User();
         newUser.setUsername(userDto.username);
         newUser.setPassword(encoder.encode(userDto.password));
-        //Code gee error
+
         Role tempRole = roleRepos.findById("ROLE_" + userDto.rolenameId).orElseThrow(() -> new ResourceNotFoundException("Role not Found"));
         newUser.setRole(tempRole);
 
@@ -44,9 +44,25 @@ public class UserService {
     public UserDto getUser(String username) {
         User t = userRepos.findById(username).orElseThrow(() -> new ResourceNotFoundException("User not Found"));
 
+        return transferToDto(t);
+    }
+
+    public List<UserDto> getAllUsers() {
+        Iterable<User> uList = userRepos.findAll();
+        List<UserDto> uDtoList = new ArrayList<>();
+
+        for(User u : uList) {
+            UserDto userDto = transferToDto(u);
+            uDtoList.add(userDto);
+        }
+        return uDtoList;
+    }
+
+    public UserDto transferToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.username = t.getUsername();
-        userDto.rolenameId = t.getRole().getRolename();
+        userDto.username = user.getUsername();
+        userDto.password = user.getPassword();
+        userDto.rolenameId = user.getRole().getRolename();
 
         return userDto;
     }

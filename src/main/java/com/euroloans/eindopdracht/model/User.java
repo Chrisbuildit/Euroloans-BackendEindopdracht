@@ -17,9 +17,8 @@ public class User {
     @OneToOne
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    public List<LoanApplication> loanApplications;
+    @ManyToMany(mappedBy = "users")
+    private Collection<LoanApplication> loanApplications;
 
     public String getUsername() {
         return username;
@@ -29,11 +28,11 @@ public class User {
         this.username = username;
     }
 
-    public List<LoanApplication> getLoanApplications() {
+    public Collection<LoanApplication> getLoanApplications() {
         return loanApplications;
     }
 
-    public void setLoanApplications(List<LoanApplication> loanApplications) {
+    public void setLoanApplications(Collection<LoanApplication> loanApplications) {
         this.loanApplications = loanApplications;
     }
 
