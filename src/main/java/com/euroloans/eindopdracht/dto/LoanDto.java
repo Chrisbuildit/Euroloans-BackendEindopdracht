@@ -8,4 +8,6 @@ public class LoanDto {
 
     public String loanApplicationName;
 
+    public String[] usernameId;
+
 }

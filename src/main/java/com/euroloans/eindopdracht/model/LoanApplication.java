@@ -1,6 +1,7 @@
 package com.euroloans.eindopdracht.model;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 
@@ -12,6 +13,9 @@ public class LoanApplication {
     public Long id ;
 
     public String name;
+
+    @Value("false")
+    public Boolean isApproved;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<User> users;
@@ -38,5 +42,13 @@ public class LoanApplication {
 
     public void setUsers(Collection<User> users) {
         this.users = users;
+    }
+
+    public Boolean getApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(Boolean approved) {
+        isApproved = approved;
     }
 }

@@ -54,10 +54,29 @@ public class LoanApplicationService {
         return lDtoList;
     }
 
+    public LoanApplicationDto approveLoan(Long id, LoanApplicationDto loanApplicationDto) {
+        Optional<LoanApplication> courseOptional = loanApplicationRepos.findById(id);
+        if (courseOptional.isPresent()) {
+            LoanApplication loanApplication = courseOptional.get();
+
+            loanApplication.setApproved(loanApplicationDto.isApproved);
+            LoanApplication returnLoanApplication = loanApplicationRepos.save(loanApplication);
+
+            LoanApplicationDto dto = new LoanApplicationDto();
+            dto.isApproved = returnLoanApplication.getApproved();
+
+            return dto;
+        }
+        else {
+            throw new ResourceNotFoundException("no LoanApplication found");
+        }
+    }
+
     public LoanApplicationDto transferToDto(LoanApplication loanApplication) {
         LoanApplicationDto loanApplicationDto = new LoanApplicationDto();
         loanApplicationDto.id = loanApplication.getId();
         loanApplicationDto.name = loanApplication.getName();
+        loanApplicationDto.isApproved = loanApplication.getApproved();
 //        loanApplicationDto.usernameId = loanApplication.getUsers();
 
 //        for (User u : loanApplication.getUsers()) {

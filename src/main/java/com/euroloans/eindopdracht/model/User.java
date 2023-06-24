@@ -12,6 +12,7 @@ public class User {
     @Id
     public String username;
 
+    @Column(unique=true)
     private String password;
 
     @OneToOne

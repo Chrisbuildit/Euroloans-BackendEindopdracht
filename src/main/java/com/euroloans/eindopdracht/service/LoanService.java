@@ -27,11 +27,15 @@ public class LoanService {
     public String createLoan(LoanDto loanDto) {
         Loan newLoan = new Loan();
         LoanApplication loanapplication = loanApplicationRepository.findById(loanDto.loanApplicationId).get();
-        newLoan.setLoanApplication(loanapplication);
 
-        loanRepository.save(newLoan);
+        if(loanapplication.isApproved == Boolean.TRUE) {
+            newLoan.setLoanApplication(loanapplication);
+            loanRepository.save(newLoan);
 
-        return "Done";
+            return "Done";
+        } else {
+            return "The loanApplication first needs to be approved";
+        }
     }
 
     public LoanDto getLoan(Long loanId) {

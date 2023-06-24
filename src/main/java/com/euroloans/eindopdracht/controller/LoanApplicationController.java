@@ -1,7 +1,9 @@
 package com.euroloans.eindopdracht.controller;
 
 import com.euroloans.eindopdracht.dto.LoanApplicationDto;
+import com.euroloans.eindopdracht.model.Loan;
 import com.euroloans.eindopdracht.service.LoanApplicationService;
+import com.euroloans.eindopdracht.service.LoanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,12 @@ public class LoanApplicationController {
     @PostMapping
     public ResponseEntity<Long> createLoanApplication(@RequestBody LoanApplicationDto loanApplicationDto) {
         return new ResponseEntity<>(loanApplicationService.createLoanApplication(loanApplicationDto), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LoanApplicationDto> approveLoan(@PathVariable Long id, @RequestBody LoanApplicationDto loanApplicationDto) {
+        LoanApplicationDto dto = loanApplicationService.approveLoan(id, loanApplicationDto);
+        return ResponseEntity.ok().body(dto);
     }
 
 }
