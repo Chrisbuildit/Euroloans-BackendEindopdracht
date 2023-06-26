@@ -5,6 +5,8 @@ package com.euroloans.eindopdracht.dto;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 public class LoanApplicationDto {
     public Long id;
 
@@ -12,5 +14,5 @@ public class LoanApplicationDto {
     public Boolean isApproved;
 
 //    @Size(min=2)
-    public String[] usernameId;
+    public List<String> usernameId;
 }

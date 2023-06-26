@@ -1,5 +1,7 @@
 package com.euroloans.eindopdracht.dto;
 
+import java.util.List;
+
 public class LoanDto {
 
     public Long loanId;
@@ -8,6 +10,6 @@ public class LoanDto {
 
     public String loanApplicationName;
 
-    public String[] usernameId;
+    public List<String> usernameId;
 
 }

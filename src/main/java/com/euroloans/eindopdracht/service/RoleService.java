@@ -26,16 +26,7 @@ public class RoleService {
             rdto.rolename = r.getRolename();
             roleDtos.add(rdto);
         }
-//            rdto.usernameId = r.getUser().getUsername();
-
-//            for (User u : r.getUsers()) {
-//                String[] usernames = new String[u.getUsername().length()];
-//                rdto.usernameId = Arrays.fill(usernames,u.getUsername());
-//            }
-//        }
-//            roleDtos.add(rdto);
-//        }
-
+//
         return roleDtos;
     }
 }

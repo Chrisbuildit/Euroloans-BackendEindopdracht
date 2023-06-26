@@ -7,6 +7,9 @@ import com.euroloans.eindopdracht.model.LoanApplication;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.LoanApplicationRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,6 +46,32 @@ public class LoanApplicationService {
         return loanApplication.getId();
     }
 
+    public LoanApplicationDto getLoanApplication(Long id) {
+        LoanApplication l = loanApplicationRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanApplication not Found"));
+
+        String currentUserName;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            currentUserName = authentication.getName();
+
+            User currentuser = userRepos.findById(currentUserName).orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+
+            if (currentuser.getRole().getRolename().equals("ROLE_BORROWER")) {
+
+                if (l.getUsers().contains(currentuser)) {//
+                    return transferToDto(l);
+                } else {
+                    throw new ResourceNotFoundException("You do not have access");
+                }
+
+            } else {
+                return transferToDto(l);
+            }
+        } else {
+            throw new ResourceNotFoundException("Authentication error");
+        }
+    }
+
     public List<LoanApplicationDto> getAllLoanApplications() {
         Iterable<LoanApplication> lList = loanApplicationRepos.findAll();
         List<LoanApplicationDto> lDtoList = new ArrayList<>();
@@ -77,14 +106,12 @@ public class LoanApplicationService {
         loanApplicationDto.id = loanApplication.getId();
         loanApplicationDto.name = loanApplication.getName();
         loanApplicationDto.isApproved = loanApplication.getApproved();
-//        loanApplicationDto.usernameId = loanApplication.getUsers();
 
-//        for (User u : loanApplication.getUsers()) {
-//            String[] usernames = new String[u.getUsername().length()];
-//            loanApplicationDto.usernameId = Arrays.fill(usernames,u.getUsername());
-//            }
-//        }
-
+        List<String> usernames = new ArrayList<>();
+        for (User u : loanApplication.getUsers()) {
+            usernames.add(u.getUsername());
+        }
+        loanApplicationDto.usernameId = usernames;
         return loanApplicationDto;
     }
 }

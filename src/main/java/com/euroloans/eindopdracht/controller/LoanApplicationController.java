@@ -36,4 +36,9 @@ public class LoanApplicationController {
         return ResponseEntity.ok().body(dto);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getLoanApplication(@PathVariable Long id) {
+        return ResponseEntity.ok(loanApplicationService.getLoanApplication(id));
+    }
+
 }

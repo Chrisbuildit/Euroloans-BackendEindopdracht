@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
+import com.euroloans.eindopdracht.model.LoanApplication;
 import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.RoleRepository;
@@ -61,8 +62,14 @@ public class UserService {
     public UserDto transferToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.username = user.getUsername();
-        userDto.password = user.getPassword();
+        userDto.password = "Confidential";
         userDto.rolenameId = user.getRole().getRolename();
+
+        List<String> loanApplications = new ArrayList<>();
+        for (LoanApplication l : user.getLoanApplications()) {
+            loanApplications.add(l.getName());
+        }
+        userDto.loanApplications = loanApplications;
 
         return userDto;
     }

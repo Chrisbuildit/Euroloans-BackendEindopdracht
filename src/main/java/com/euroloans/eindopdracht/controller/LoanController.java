@@ -1,10 +1,13 @@
 package com.euroloans.eindopdracht.controller;
 
+import com.euroloans.eindopdracht.dto.LoanApplicationDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.service.LoanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class LoanController {
@@ -21,7 +24,12 @@ public class LoanController {
     }
 
     @GetMapping("/loan")
-    public ResponseEntity<Object> getUser(@RequestParam Long loanId) {
+    public ResponseEntity<Object> getLoan(@RequestParam Long loanId) {
         return ResponseEntity.ok(loanService.getLoan(loanId));
+    }
+
+    @GetMapping("/loans")
+    public ResponseEntity<List<LoanDto>> getAllLoans() {
+        return ResponseEntity.ok(loanService.getAllLoans());
     }
 }

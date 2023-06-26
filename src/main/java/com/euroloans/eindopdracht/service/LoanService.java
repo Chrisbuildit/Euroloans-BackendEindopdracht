@@ -1,5 +1,6 @@
 package com.euroloans.eindopdracht.service;
 
+import com.euroloans.eindopdracht.dto.LoanApplicationDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
@@ -10,6 +11,8 @@ import com.euroloans.eindopdracht.repository.LoanApplicationRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,10 +44,31 @@ public class LoanService {
     public LoanDto getLoan(Long loanId) {
         Loan l = loanRepository.findById(loanId).orElseThrow(() -> new ResourceNotFoundException("Loan not Found"));
 
+        return transferToDto(l);
+    }
+
+    public List<LoanDto> getAllLoans() {
+        Iterable<Loan> lList = loanRepository.findAll();
+        List<LoanDto> lDtoList = new ArrayList<>();
+
+        for(Loan l : lList) {
+            LoanDto loanDto = transferToDto(l);
+            lDtoList.add(loanDto);
+        }
+        return lDtoList;
+    }
+
+    public LoanDto transferToDto(Loan loan) {
         LoanDto loanDto = new LoanDto();
-        loanDto.loanId = l.getLoanId();
-        loanDto.loanApplicationId = l.getLoanApplication().getId();
-        loanDto.loanApplicationName = l.getLoanApplication().getName();
+        loanDto.loanId = loan.getLoanId();
+        loanDto.loanApplicationId = loan.getLoanApplication().getId();
+        loanDto.loanApplicationName = loan.getLoanApplication().getName();
+
+        List<String> usernames = new ArrayList<>();
+        for (User u : loan.getLoanApplication().getUsers()) {
+            usernames.add(u.getUsername());
+        }
+        loanDto.usernameId = usernames;
 
         return loanDto;
     }
