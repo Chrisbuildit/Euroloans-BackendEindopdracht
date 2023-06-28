@@ -1,6 +1,5 @@
 package com.euroloans.eindopdracht.controller;
 
-import com.euroloans.eindopdracht.dto.LoanApplicationDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.service.LoanService;
 import org.springframework.http.HttpStatus;

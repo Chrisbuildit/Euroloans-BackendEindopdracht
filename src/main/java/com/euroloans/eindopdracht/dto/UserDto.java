@@ -12,5 +12,5 @@ public class UserDto {
 
     public String rolenameId;
 
-    public List<String> loanApplications;
+    public List<String> loanRequests;
 }

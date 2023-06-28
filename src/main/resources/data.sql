@@ -1,1 +1,1 @@
-insert into roles(rolename) values ('ROLE_BORROWER'), ('ROLE_EMPLOYEE'), ('ROLE_INVESTOR'), ('ROLE_OWNER');
+insert into roles(rolename) values ('ROLE_BORROWER'), ('ROLE_EMPLOYEE'), ('ROLE_LENDER'), ('ROLE_OWNER');

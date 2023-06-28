@@ -1,16 +1,23 @@
 package com.euroloans.eindopdracht.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="loans")
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long loanId;
+    private Long loanId;
 
     @OneToOne
-    LoanApplication loanApplication;
+    LoanRequest loanRequest;
+
+    @OneToMany(mappedBy = "loan")
+    @JsonIgnore
+    private List<Payment> payments;
 
     public Long getLoanId() {
         return loanId;
@@ -20,11 +27,12 @@ public class Loan {
         this.loanId = loanId;
     }
 
-    public LoanApplication getLoanApplication() {
-        return loanApplication;
+    public LoanRequest getLoanRequest() {
+        return loanRequest;
     }
 
-    public void setLoanApplication(LoanApplication loanApplication) {
-        this.loanApplication = loanApplication;
+    public void setLoanRequest(LoanRequest loanRequest) {
+        this.loanRequest = loanRequest;
     }
+
 }

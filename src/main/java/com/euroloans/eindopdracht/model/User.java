@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name="users")
 public class User {
     @Id
-    public String username;
+    private String username;
 
     @Column(unique=true)
     private String password;
@@ -18,8 +18,12 @@ public class User {
     @OneToOne
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Payment> payments;
+
     @ManyToMany(mappedBy = "users")
-    private Collection<LoanApplication> loanApplications;
+    private Collection<LoanRequest> loanRequests;
 
     public String getUsername() {
         return username;
@@ -29,12 +33,12 @@ public class User {
         this.username = username;
     }
 
-    public Collection<LoanApplication> getLoanApplications() {
-        return loanApplications;
+    public Collection<LoanRequest> getLoanRequests() {
+        return loanRequests;
     }
 
-    public void setLoanApplications(Collection<LoanApplication> loanApplications) {
-        this.loanApplications = loanApplications;
+    public void setLoanRequests(Collection<LoanRequest> loanRequests) {
+        this.loanRequests = loanRequests;
     }
 
     public String getPassword() {

@@ -6,19 +6,19 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.Collection;
 
 @Entity
-@Table(name="loanApplications")
-public class LoanApplication {
+@Table(name="loanRequests")
+public class LoanRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id ;
+    private Long id ;
 
-    public String name;
+    private String name;
 
     @Value("false")
     public Boolean isApproved;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<User> users;
+    public Collection<User> users;
 
     public Long getId() {
         return id;

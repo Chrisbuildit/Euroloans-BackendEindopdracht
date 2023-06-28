@@ -6,10 +6,10 @@ public class LoanDto {
 
     public Long loanId;
 
-    public Long loanApplicationId;
+    public Long loanRequestId;
 
-    public String loanApplicationName;
+    public String loanRequestName;
 
-    public List<String> usernameId;
+    public List<String> usernameIds;
 
 }

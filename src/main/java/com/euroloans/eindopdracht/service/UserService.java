@@ -2,7 +2,7 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
-import com.euroloans.eindopdracht.model.LoanApplication;
+import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.RoleRepository;
@@ -65,11 +65,11 @@ public class UserService {
         userDto.password = "Confidential";
         userDto.rolenameId = user.getRole().getRolename();
 
-        List<String> loanApplications = new ArrayList<>();
-        for (LoanApplication l : user.getLoanApplications()) {
-            loanApplications.add(l.getName());
+        List<String> loanRequests = new ArrayList<>();
+        for (LoanRequest l : user.getLoanRequests()) {
+            loanRequests.add(l.getName());
         }
-        userDto.loanApplications = loanApplications;
+        userDto.loanRequests = loanRequests;
 
         return userDto;
     }

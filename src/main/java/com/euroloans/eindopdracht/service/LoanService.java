@@ -1,13 +1,13 @@
 package com.euroloans.eindopdracht.service;
 
-import com.euroloans.eindopdracht.dto.LoanApplicationDto;
+import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.Loan;
-import com.euroloans.eindopdracht.model.LoanApplication;
+import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.User;
-import com.euroloans.eindopdracht.repository.LoanApplicationRepository;
+import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,24 +20,24 @@ public class LoanService {
 
     private final LoanRepository loanRepository;
 
-    private final LoanApplicationRepository loanApplicationRepository;
+    private final LoanRequestRepository loanRequestRepository;
 
-    public LoanService(LoanRepository loanRepository, LoanApplicationRepository loanApplicationRepository) {
+    public LoanService(LoanRepository loanRepository, LoanRequestRepository loanRequestRepository) {
         this.loanRepository = loanRepository;
-        this.loanApplicationRepository = loanApplicationRepository;
+        this.loanRequestRepository = loanRequestRepository;
     }
 
     public String createLoan(LoanDto loanDto) {
         Loan newLoan = new Loan();
-        LoanApplication loanapplication = loanApplicationRepository.findById(loanDto.loanApplicationId).get();
+        LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).get();
 
-        if(loanapplication.isApproved == Boolean.TRUE) {
-            newLoan.setLoanApplication(loanapplication);
+        if(loanRequest.isApproved == Boolean.TRUE) {
+            newLoan.setLoanRequest(loanRequest);
             loanRepository.save(newLoan);
 
             return "Done";
         } else {
-            return "The loanApplication first needs to be approved";
+            return "The loanRequest first needs to be approved";
         }
     }
 
@@ -61,14 +61,14 @@ public class LoanService {
     public LoanDto transferToDto(Loan loan) {
         LoanDto loanDto = new LoanDto();
         loanDto.loanId = loan.getLoanId();
-        loanDto.loanApplicationId = loan.getLoanApplication().getId();
-        loanDto.loanApplicationName = loan.getLoanApplication().getName();
+        loanDto.loanRequestId = loan.getLoanRequest().getId();
+        loanDto.loanRequestName = loan.getLoanRequest().getName();
 
         List<String> usernames = new ArrayList<>();
-        for (User u : loan.getLoanApplication().getUsers()) {
+        for (User u : loan.getLoanRequest().getUsers()) {
             usernames.add(u.getUsername());
         }
-        loanDto.usernameId = usernames;
+        loanDto.usernameIds = usernames;
 
         return loanDto;
     }
