@@ -12,6 +12,9 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;
 
+//    private String loanRequestId;
+//    private String loanRequestName;
+
     @OneToOne
     LoanRequest loanRequest;
 

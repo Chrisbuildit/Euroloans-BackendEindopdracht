@@ -10,9 +10,10 @@ import java.util.List;
 @Table(name="users")
 public class User {
     @Id
+    //Werk nie
+    @Column(unique=true)
     private String username;
 
-    @Column(unique=true)
     private String password;
 
     @OneToOne
@@ -24,6 +25,8 @@ public class User {
 
     @ManyToMany(mappedBy = "users")
     private Collection<LoanRequest> loanRequests;
+
+
 
     public String getUsername() {
         return username;

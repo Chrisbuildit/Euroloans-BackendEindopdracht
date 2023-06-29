@@ -1,11 +1,13 @@
 package com.euroloans.eindopdracht.controller;
 
 import com.euroloans.eindopdracht.dto.LoanRequestDto;
+import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.service.LoanRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,7 @@ public class LoanRequestController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createLoanRequest(@RequestBody LoanRequestDto loanRequestDto) {
+    public ResponseEntity<LoanRequest> createLoanRequest(@RequestBody LoanRequestDto loanRequestDto) {
         return new ResponseEntity<>(loanRequestService.createLoanRequest(loanRequestDto), HttpStatus.CREATED);
     }
 

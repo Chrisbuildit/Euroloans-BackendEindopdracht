@@ -64,11 +64,11 @@ public class LoanService {
         loanDto.loanRequestId = loan.getLoanRequest().getId();
         loanDto.loanRequestName = loan.getLoanRequest().getName();
 
-        List<String> usernames = new ArrayList<>();
-        for (User u : loan.getLoanRequest().getUsers()) {
-            usernames.add(u.getUsername());
-        }
-        loanDto.usernameIds = usernames;
+//        List<String> usernames = new ArrayList<>();
+//        for (User u : loan.getLoanRequest().getUsers()) {
+//            usernames.add(u.getUsername());
+//        }
+//        loanDto.usernameIds = usernames;
 
         return loanDto;
     }
