@@ -9,6 +9,7 @@ import java.util.Collection;
 @Table(name = "roles")
 public class Role {
     @Id
+    @Column(name = "id")
     private String rolename;
 
     public String getRolename() {

@@ -5,6 +5,8 @@ import com.euroloans.eindopdracht.model.Role;
 import java.util.List;
 
 public class UserDto {
+    public Long IdNumber;
+
 
     public String username;
 

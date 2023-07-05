@@ -36,8 +36,8 @@ public class LoanRequestService {
         Role role = user.getRole();
         if (role.getRolename().equals("ROLE_BORROWER")) {
             if(loanRequest.users==null) {
-                HashMap<String, User> hashMap = new HashMap<String, User>();
-                loanRequest.setUsers(hashMap);
+                Map<String, User> map = new HashMap<>();
+                loanRequest.setUsers(map);
             }
             loanRequest.addUsers("Borrower", user);
         } else {

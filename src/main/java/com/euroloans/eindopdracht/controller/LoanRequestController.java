@@ -4,6 +4,7 @@ import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.service.LoanRequestService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class LoanRequestController {
         return ResponseEntity.ok(loanRequestService.getAllLoanRequests());
     }
 
-    @PostMapping
+    @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     public ResponseEntity<LoanRequest> createLoanRequest(@RequestBody LoanRequestDto loanRequestDto) {
         return new ResponseEntity<>(loanRequestService.createLoanRequest(loanRequestDto), HttpStatus.CREATED);
     }

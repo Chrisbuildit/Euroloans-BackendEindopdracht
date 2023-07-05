@@ -11,9 +11,7 @@ import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LoanService {
@@ -27,7 +25,7 @@ public class LoanService {
         this.loanRequestRepository = loanRequestRepository;
     }
 
-    public String createLoan(LoanDto loanDto) {
+    public Loan createLoan(LoanDto loanDto) {
         Loan newLoan = new Loan();
         LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).get();
 
@@ -35,9 +33,9 @@ public class LoanService {
             newLoan.setLoanRequest(loanRequest);
             loanRepository.save(newLoan);
 
-            return "Done";
+            return newLoan;
         } else {
-            return "The loanRequest first needs to be approved";
+            throw new ResourceNotFoundException("The loanRequest first needs to be approved");
         }
     }
 
@@ -63,6 +61,7 @@ public class LoanService {
         loanDto.loanId = loan.getLoanId();
         loanDto.loanRequestId = loan.getLoanRequest().getId();
         loanDto.loanRequestName = loan.getLoanRequest().getName();
+        loanDto.usernameIds = loan.getLoanRequest().getUsers();
 
 //        List<String> usernames = new ArrayList<>();
 //        for (User u : loan.getLoanRequest().getUsers()) {

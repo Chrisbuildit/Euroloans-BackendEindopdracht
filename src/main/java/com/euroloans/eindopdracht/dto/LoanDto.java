@@ -1,6 +1,10 @@
 package com.euroloans.eindopdracht.dto;
 
+import com.euroloans.eindopdracht.model.User;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoanDto {
 
@@ -10,6 +14,7 @@ public class LoanDto {
 
     public String loanRequestName;
 
-    public List<String> usernameIds;
+    public Map<String, User> usernameIds;
+    //    public List<String> usernameIds;
 
 }
