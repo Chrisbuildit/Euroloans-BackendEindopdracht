@@ -17,7 +17,6 @@ import java.util.*;
 @Service
 public class LoanRequestService {
     private final LoanRequestRepository loanRequestRepos;
-
     private final UserRepository userRepos;
 
     public LoanRequestService(LoanRequestRepository loanRequestRepos, UserRepository userRepos) {
@@ -30,6 +29,7 @@ public class LoanRequestService {
         loanRequest.setName(loanRequestDto.name);
         loanRequest.setAmount(loanRequestDto.amount);
         loanRequest.setApproved((loanRequestDto.isApproved));
+        loanRequest.setUsernameId("Not applicable");
 
         User user = userRepos.findById(loanRequestDto.usernameId).orElseThrow(() ->
                 new ResourceNotFoundException("User not Found"));
@@ -44,7 +44,7 @@ public class LoanRequestService {
             throw new ResourceNotFoundException("You do not have access");
         }
 
-        //Old code
+        //Iteration for list
 //        List<User> loanRequestUsers = new ArrayList<>();
 //        for (String username : loanRequestDto.usernameIds) {
 //            User user = userRepos.findById(username).orElseThrow(() ->
@@ -71,13 +71,11 @@ public class LoanRequestService {
 
             if (currentuser.getRole().getRolename().equals("ROLE_BORROWER")) {
 
-//                if (l.getUsers().contains(currentuser)) {
                 if (l.getUsers().containsValue(currentuser)) {
                     return transferToDto(l);
                 } else {
                     throw new ResourceNotFoundException("You do not have access");
                 }
-
             } else {
                 return transferToDto(l);
             }
@@ -97,26 +95,47 @@ public class LoanRequestService {
         return lDtoList;
     }
 
-    public String approveLoan(Long id, LoanRequestDto loanRequestDto) {
+    public LoanRequest updateLoan(Long id, LoanRequestDto loanRequestDto) {
         Optional<LoanRequest> courseOptional = loanRequestRepos.findById(id);
         if (courseOptional.isPresent()) {
             LoanRequest loanRequest = courseOptional.get();
+            LoanRequest updatedLoanRequest = new LoanRequest();
 
-            loanRequest.setApproved(loanRequestDto.isApproved);
+            UserIdentification userIdentification = new UserIdentification(userRepos);
+            User user = userIdentification.getCurrentUser();
 
-//            User user = userRepos.findById(loanRequestDto.usernameId).orElseThrow(() -> new ResourceNotFoundException("User not Found"));
-//            loanRequest.users.add(user);
+            if (user.getRole().getRolename().equals("ROLE_EMPLOYEE")) {
 
-            loanRequestRepos.save(loanRequest);
+                updatedLoanRequest.setApproved(loanRequestDto.isApproved);
+                updatedLoanRequest.setAmount(loanRequest.getAmount());
 
-            return "LoanRequest approved";
+            } else {
+                if (user.getRole().getRolename().equals("ROLE_BORROWER")
+                        && loanRequest.getUsers().containsValue(user)) {
+
+                    updatedLoanRequest.setAmount(loanRequestDto.amount);
+                    updatedLoanRequest.setApproved(loanRequest.getApproved());
+
+                } else {
+                    throw new ResourceNotFoundException("You do not have access");
+                }
+            }
+
+            updatedLoanRequest.setUsernameId("Not applicable");
+            updatedLoanRequest.setName(loanRequest.getName());
+            updatedLoanRequest.setUsers(loanRequest.getUsers());
+            updatedLoanRequest.setId(loanRequest.getId());
+
+            loanRequestRepos.save(updatedLoanRequest);
+
+            return updatedLoanRequest;
         }
         else {
             throw new ResourceNotFoundException("no LoanRequest found");
         }
     }
 
-    public LoanRequestDto transferToDto(LoanRequest loanRequest) {
+        public LoanRequestDto transferToDto(LoanRequest loanRequest) {
         LoanRequestDto loanRequestDto = new LoanRequestDto();
         loanRequestDto.id = loanRequest.getId();
         loanRequestDto.name = loanRequest.getName();
@@ -125,7 +144,7 @@ public class LoanRequestService {
         loanRequestDto.amount = loanRequest.getAmount();
         loanRequestDto.usernameIds = loanRequest.getUsers();
 
-        //Old code
+        //Iteration for list
 //        List<String> usernames = new ArrayList<>();
 //        for (User u : loanRequest.getUsers()) {
 //            usernames.add(u.getUsername());

@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name="users")
 public class User {
     @Id
-    private Long IdNumber;
     //Werk nie
     @Column(unique=true, name = "id")
     private String username;
@@ -31,14 +30,6 @@ public class User {
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private Collection<LoanRequest> loanRequests;
-
-    public Long getIdNumber() {
-        return IdNumber;
-    }
-
-    public void setIdNumber(Long idNumber) {
-        IdNumber = idNumber;
-    }
 
     public String getUsername() {
         return username;

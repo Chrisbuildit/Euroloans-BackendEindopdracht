@@ -1,5 +1,6 @@
 package com.euroloans.eindopdracht.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -21,6 +22,7 @@ public class LoanRequest {
 
     private Integer amount;
 
+    @Transient
     private String usernameId;
 
     @Value("false")

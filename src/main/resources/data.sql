@@ -1,2 +1,3 @@
 insert into roles(id) values ('ROLE_BORROWER'), ('ROLE_EMPLOYEE'), ('ROLE_LENDER'), ('ROLE_OWNER'), ('ROLE_TEST');
-insert into users(id, roles_id) values ('EMP','ROLE_EMPLOYEE'), ('BOR','ROLE_BORROWER'), ('LEN','ROLE_LENDER'), ('OWN', 'ROLE_OWNER');
+-- insert into users(id, password, roles_id) values ('EMP', 'user', 'ROLE_EMPLOYEE'), ('BOR', 'user', 'ROLE_BORROWER'), ('LEN', 'user', 'ROLE_LENDER'), ('OWN', 'user', 'ROLE_OWNER');
+-- insert into users(id, role) values ('EMP', 'ROLE_EMPLOYEE'), ('BOR', 'ROLE_BORROWER'), ('LEN', 'ROLE_LENDER'), ('OWN', 'ROLE_OWNER');

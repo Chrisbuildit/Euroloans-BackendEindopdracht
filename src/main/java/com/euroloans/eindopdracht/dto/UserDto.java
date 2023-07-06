@@ -1,12 +1,11 @@
 package com.euroloans.eindopdracht.dto;
 
 import com.euroloans.eindopdracht.model.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
 public class UserDto {
-    public Long IdNumber;
-
 
     public String username;
 

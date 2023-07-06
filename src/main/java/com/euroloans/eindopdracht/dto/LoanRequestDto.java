@@ -25,4 +25,8 @@ public class LoanRequestDto {
     public String getName() {
         return name;
     }
+
+    public Integer getAmount() {
+        return amount;
+    }
 }

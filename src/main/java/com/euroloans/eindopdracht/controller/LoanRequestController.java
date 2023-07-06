@@ -21,6 +21,11 @@ public class LoanRequestController {
         this.loanRequestService = loanRequestService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getLoanRequest(@PathVariable Long id) {
+        return ResponseEntity.ok(loanRequestService.getLoanRequest(id));
+    }
+
     @GetMapping
     public ResponseEntity<List<LoanRequestDto>> getAllLoanRequests() {
         return ResponseEntity.ok(loanRequestService.getAllLoanRequests());
@@ -32,12 +37,8 @@ public class LoanRequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> approveLoan(@PathVariable Long id, @RequestBody LoanRequestDto loanRequestDto) {
-        return new ResponseEntity<>(loanRequestService.approveLoan(id, loanRequestDto), HttpStatus.CREATED);
+    public ResponseEntity<LoanRequest> updateLoan(@PathVariable Long id, @RequestBody LoanRequestDto loanRequestDto) {
+        return new ResponseEntity<>(loanRequestService.updateLoan(id, loanRequestDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getLoanRequest(@PathVariable Long id) {
-        return ResponseEntity.ok(loanRequestService.getLoanRequest(id));
-    }
 }
