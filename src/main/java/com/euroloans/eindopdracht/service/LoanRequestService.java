@@ -104,10 +104,13 @@ public class LoanRequestService {
             UserIdentification userIdentification = new UserIdentification(userRepos);
             User user = userIdentification.getCurrentUser();
 
+            updatedLoanRequest.setUsers(loanRequest.getUsers());
+
             if (user.getRole().getRolename().equals("ROLE_EMPLOYEE")) {
 
                 updatedLoanRequest.setApproved(loanRequestDto.isApproved);
                 updatedLoanRequest.setAmount(loanRequest.getAmount());
+                updatedLoanRequest.addUsers("Employee", user);
 
             } else {
                 if (user.getRole().getRolename().equals("ROLE_BORROWER")
@@ -123,7 +126,6 @@ public class LoanRequestService {
 
             updatedLoanRequest.setUsernameId("Not applicable");
             updatedLoanRequest.setName(loanRequest.getName());
-            updatedLoanRequest.setUsers(loanRequest.getUsers());
             updatedLoanRequest.setId(loanRequest.getId());
 
             loanRequestRepos.save(updatedLoanRequest);
@@ -132,24 +134,46 @@ public class LoanRequestService {
         }
         else {
             throw new ResourceNotFoundException("no LoanRequest found");
+            }
+        }
+
+    public void deleteLoanRequest(Long id) {
+        UserIdentification userIdentification = new UserIdentification(userRepos);
+        User user = userIdentification.getCurrentUser();
+
+        LoanRequest loanRequest  = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
+
+        if (loanRequest.getUsers().containsValue(user)) {
+            loanRequestRepos.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("You do not have access");
         }
     }
 
-        public LoanRequestDto transferToDto(LoanRequest loanRequest) {
+    public LoanRequestDto transferToDto(LoanRequest loanRequest) {
         LoanRequestDto loanRequestDto = new LoanRequestDto();
         loanRequestDto.id = loanRequest.getId();
         loanRequestDto.name = loanRequest.getName();
         loanRequestDto.isApproved = loanRequest.getApproved();
         loanRequestDto.usernameId = "Not applicable";
         loanRequestDto.amount = loanRequest.getAmount();
-        loanRequestDto.usernameIds = loanRequest.getUsers();
+
+        //Gives wrong username
+        Map<String , Map<String, String>> map = new HashMap<>();
+        Map<String , String> innermap = new HashMap<>();
+        for (Map.Entry<String, User> set : loanRequest.getUsers().entrySet()) {
+            innermap.put("username", set.getValue().getUsername());
+            map.put(set.getValue().getRole().getRolename(), innermap);
+        }
+
+        loanRequestDto.usernameIds = map;
 
         //Iteration for list
-//        List<String> usernames = new ArrayList<>();
-//        for (User u : loanRequest.getUsers()) {
-//            usernames.add(u.getUsername());
-//        }
-//        loanRequestDto.usernameIds = usernames;
+    //        List<String> usernames = new ArrayList<>();
+    //        for (User u : loanRequest.getUsers()) {
+    //            usernames.add(u.getUsername());
+    //        }
+    //        loanRequestDto.usernameIds = usernames;
 
         return loanRequestDto;
     }

@@ -20,7 +20,7 @@ public class LoanRequestDto {
 
     //    @Size(min=2)
 //    public List<String> usernameIds;
-    public Map<String, User> usernameIds;
+    public Map<String, Map<String, String>> usernameIds;
 
     public String getName() {
         return name;

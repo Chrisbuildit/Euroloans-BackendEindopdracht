@@ -24,12 +24,25 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Payment> payments;
+    private Collection<Payment> payments;
 
-    //Is mappedBy nodig?
+    //Is mappedBy nodig hier?
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private Collection<LoanRequest> loanRequests;
+
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Collection<Investment> investments;
+
+    @OneToMany(mappedBy = "createdBy")
+    @JsonIgnore
+    private Collection<Loan> loans;
+
+//    public Object getUsernameAndRole(String username, String role) {
+//        Object test = new Object();
+//        test.
+//    }
 
     public String getUsername() {
         return username;
@@ -61,5 +74,29 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Collection<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(Collection<Payment> payments) {
+        this.payments = payments;
+    }
+
+    public Collection<Investment> getInvestments() {
+        return investments;
+    }
+
+    public void setInvestments(Collection<Investment> investments) {
+        this.investments = investments;
+    }
+
+    public Collection<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(Collection<Loan> loans) {
+        this.loans = loans;
     }
 }

@@ -1,6 +1,7 @@
 package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
+import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import lombok.AllArgsConstructor;

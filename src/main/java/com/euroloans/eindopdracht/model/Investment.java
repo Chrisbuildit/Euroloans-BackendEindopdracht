@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -26,5 +27,10 @@ public class Investment {
     @JsonIgnore
     private List<Payment> payments;
 
+    @ManyToOne
+    private Loan loan;
+
+    @ManyToMany
+    private Collection<User> users;
 
 }

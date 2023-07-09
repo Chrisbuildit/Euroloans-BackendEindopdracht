@@ -19,6 +19,8 @@ public class Payment {
 
     private Integer amount;
 
+    private String paymentReference;
+
     @ManyToOne
     private Loan loan;
 

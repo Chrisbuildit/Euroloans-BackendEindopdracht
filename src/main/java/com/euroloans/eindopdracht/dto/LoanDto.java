@@ -14,6 +14,8 @@ public class LoanDto {
 
     public String loanRequestName;
 
+    public String usernameId;
+
     public Map<String, User> usernameIds;
     //    public List<String> usernameIds;
 

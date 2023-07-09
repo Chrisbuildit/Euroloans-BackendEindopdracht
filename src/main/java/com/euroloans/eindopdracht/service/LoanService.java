@@ -9,6 +9,7 @@ import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
+import com.euroloans.eindopdracht.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,23 +21,32 @@ public class LoanService {
 
     private final LoanRequestRepository loanRequestRepository;
 
-    public LoanService(LoanRepository loanRepository, LoanRequestRepository loanRequestRepository) {
+    private final UserRepository userRepository;
+
+    public LoanService(LoanRepository loanRepository, LoanRequestRepository loanRequestRepository, UserRepository userRepository) {
         this.loanRepository = loanRepository;
         this.loanRequestRepository = loanRequestRepository;
+        this.userRepository = userRepository;
     }
 
     public Loan createLoan(LoanDto loanDto) {
         Loan newLoan = new Loan();
-        LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).get();
+        LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).orElseThrow(() ->
+                new ResourceNotFoundException("LoanRequest not Found"));
 
-        if(loanRequest.isApproved == Boolean.TRUE) {
+        UserIdentification userIdentification = new UserIdentification(userRepository);
+        User user = userIdentification.getCurrentUser();
+        //Temporary disabled
+//        if(loanRequest.isApproved == Boolean.TRUE) {
             newLoan.setLoanRequest(loanRequest);
+            newLoan.setCreatedBy(user);
             loanRepository.save(newLoan);
 
             return newLoan;
-        } else {
-            throw new ResourceNotFoundException("The loanRequest first needs to be approved");
-        }
+        //Temporary disabled
+//        } else {
+//            throw new ResourceNotFoundException("The loanRequest first needs to be approved");
+//        }
     }
 
     public LoanDto getLoan(Long loanId) {
@@ -62,12 +72,7 @@ public class LoanService {
         loanDto.loanRequestId = loan.getLoanRequest().getId();
         loanDto.loanRequestName = loan.getLoanRequest().getName();
         loanDto.usernameIds = loan.getLoanRequest().getUsers();
-
-//        List<String> usernames = new ArrayList<>();
-//        for (User u : loan.getLoanRequest().getUsers()) {
-//            usernames.add(u.getUsername());
-//        }
-//        loanDto.usernameIds = usernames;
+        loanDto.usernameId = loan.getCreatedBy().getUsername();
 
         return loanDto;
     }

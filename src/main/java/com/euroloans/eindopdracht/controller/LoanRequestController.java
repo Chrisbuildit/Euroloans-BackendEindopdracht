@@ -41,4 +41,9 @@ public class LoanRequestController {
         return new ResponseEntity<>(loanRequestService.updateLoan(id, loanRequestDto), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCourse(@PathVariable Long id) {
+        loanRequestService.deleteLoanRequest(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -29,7 +29,7 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public String createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         User newUser = new User();
         newUser.setUsername(userDto.username);
         newUser.setPassword(encoder.encode(userDto.password));
@@ -39,7 +39,7 @@ public class UserService {
 
         userRepos.save(newUser);
 
-        return "Done";
+        return newUser;
     }
 
     public UserDto getUser(String username) {
@@ -64,6 +64,7 @@ public class UserService {
         userDto.username = user.getUsername();
         userDto.password = "Confidential";
         userDto.rolenameId = user.getRole().getRolename();
+        userDto.loans = new ArrayList<>(user.getLoans());
 
         List<String> loanRequests = new ArrayList<>();
         for (LoanRequest l : user.getLoanRequests()) {

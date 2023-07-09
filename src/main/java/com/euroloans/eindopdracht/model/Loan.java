@@ -12,15 +12,20 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;
 
-//    private String loanRequestId;
-//    private String loanRequestName;
-
     @OneToOne
     LoanRequest loanRequest;
 
     @OneToMany(mappedBy = "loan")
     @JsonIgnore
     private List<Payment> payments;
+
+    @OneToMany(mappedBy = "loan")
+    @JsonIgnore
+    private List<Investment> investments;
+
+    @ManyToOne
+    private User createdBy;
+
 
     public Long getLoanId() {
         return loanId;
@@ -38,4 +43,27 @@ public class Loan {
         this.loanRequest = loanRequest;
     }
 
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
+    }
+
+    public List<Investment> getInvestments() {
+        return investments;
+    }
+
+    public void setInvestments(List<Investment> investments) {
+        this.investments = investments;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 }
