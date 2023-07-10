@@ -22,7 +22,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createPayment(@RequestBody PaymentDto paymentDto) {
+    public ResponseEntity<Payment> createPayment(@RequestBody PaymentDto paymentDto) {
         return new ResponseEntity<>(paymentService.createPayment(paymentDto), HttpStatus.CREATED);
     }
 

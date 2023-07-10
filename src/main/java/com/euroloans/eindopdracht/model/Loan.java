@@ -2,9 +2,14 @@ package com.euroloans.eindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name="loans")
 public class Loan {
@@ -12,12 +17,15 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;
 
+    private Integer balance;
+
     @OneToOne
     LoanRequest loanRequest;
 
-    @OneToMany(mappedBy = "loan")
-    @JsonIgnore
-    private List<Payment> payments;
+    //No longer used
+//    @OneToMany(mappedBy = "loan")
+//    @JsonIgnore
+//    private List<Payment> payments;
 
     @OneToMany(mappedBy = "loan")
     @JsonIgnore
@@ -26,44 +34,13 @@ public class Loan {
     @ManyToOne
     private User createdBy;
 
-
-    public Long getLoanId() {
-        return loanId;
+    public Integer increaseBalance(Integer i) {
+        balance = balance + i;
+        return balance;
     }
 
-    public void setLoanId(Long loanId) {
-        this.loanId = loanId;
-    }
-
-    public LoanRequest getLoanRequest() {
-        return loanRequest;
-    }
-
-    public void setLoanRequest(LoanRequest loanRequest) {
-        this.loanRequest = loanRequest;
-    }
-
-    public List<Payment> getPayments() {
-        return payments;
-    }
-
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
-    }
-
-    public List<Investment> getInvestments() {
-        return investments;
-    }
-
-    public void setInvestments(List<Investment> investments) {
-        this.investments = investments;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
+    public Integer decreaseBalance(Integer i) {
+        balance = balance - i;
+        return balance;
     }
 }

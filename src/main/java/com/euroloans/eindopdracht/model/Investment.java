@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,20 +18,41 @@ public class Investment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long investmentId;
 
-    private Integer balance;
+    private Integer balance = 0;
 
     private Integer interest;
 
     private Double ROI;
 
-    @OneToMany(mappedBy = "investment")
-    @JsonIgnore
+    private Long loanRequestId;
+
+    @Transient
+    private String usernameId;
+
+    //One-sided implementation
+    @OneToMany
     private List<Payment> payments;
 
     @ManyToOne
     private Loan loan;
 
     @ManyToMany
-    private Collection<User> users;
+    private Collection<User> users = new ArrayList<>();
 
+    public void addUsers(User user) {
+        users.add(user);
+    }
+
+    public Integer increaseBalance(Integer i) {
+        balance = balance + i;
+        return balance;
+    }
+
+    public Integer decreaseBalance(Integer i) {
+        balance = balance - i;
+        return balance;
+    }
+
+    public void addPayment(Payment payment) {
+        payments.add(payment);    }
 }

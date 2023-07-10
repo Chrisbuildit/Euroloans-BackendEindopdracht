@@ -5,4 +5,6 @@ import com.euroloans.eindopdracht.model.LoanRequest;
 import org.springframework.data.repository.CrudRepository;
 
 public interface InvestmentRepository extends CrudRepository<Investment, Long> {
+
+    Iterable<Investment> findByLoanRequestId (Long loanRequestId);
 }

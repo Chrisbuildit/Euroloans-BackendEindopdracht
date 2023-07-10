@@ -16,6 +16,7 @@ public class LoanRequestDto {
     public String name;
     public Integer amount;
     public Boolean isApproved;
+
     public String usernameId;
 
     //    @Size(min=2)

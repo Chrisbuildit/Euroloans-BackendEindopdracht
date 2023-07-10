@@ -5,10 +5,7 @@ import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.PaymentDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
-import com.euroloans.eindopdracht.repository.InvestmentRepository;
-import com.euroloans.eindopdracht.repository.LoanRepository;
-import com.euroloans.eindopdracht.repository.PaymentRepository;
-import com.euroloans.eindopdracht.repository.UserRepository;
+import com.euroloans.eindopdracht.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,24 +20,27 @@ public class PaymentService {
 
     private final LoanRepository loanRepository;
 
+    private final LoanRequestRepository loanRequestRepository;
+
     private final InvestmentRepository investmentRepository;
 
-    public PaymentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRepository loanRepository, InvestmentRepository investmentRepository) {
+    public PaymentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRepository loanRepository, LoanRequestRepository loanRequestRepository, InvestmentRepository investmentRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         this.loanRepository = loanRepository;
+        this.loanRequestRepository = loanRequestRepository;
         this.investmentRepository = investmentRepository;
     }
 
-    public Long createPayment(PaymentDto paymentDto) {
+    public Payment createPayment(PaymentDto paymentDto) {
 
         Payment payment = new Payment();
         payment.setDate(java.time.LocalDate.now());
         payment.setAmount(paymentDto.amount);
         payment.setPaymentReference(paymentDto.paymentReference);
 
-        User user = userRepository.findById(paymentDto.usernameId).orElseThrow(() ->
-                new ResourceNotFoundException("User not Found"));
+        UserIdentification userIdentification = new UserIdentification(userRepository);
+        User user = userIdentification.getCurrentUser();
         payment.setUser(user);
 
         Role role = user.getRole();
@@ -49,14 +49,13 @@ public class PaymentService {
                     new ResourceNotFoundException("Loan not Found"));
             payment.setLoan(loan);
         } else {
-            Investment investment = investmentRepository.findById(paymentDto.investmentId).orElseThrow(() ->
-                    new ResourceNotFoundException("Investment not Found"));
-            payment.setInvestment(investment);
+            LoanRequest loanRequest = loanRequestRepository.findById(paymentDto.loanRequestId).orElseThrow(() ->
+                    new ResourceNotFoundException("Loan not Found"));
+            payment.setLoanRequest(loanRequest);
         }
-
         paymentRepository.save(payment);
 
-        return payment.getPaymentId();
+        return payment;
     }
 
     public PaymentDto getPayment(Long paymentId) {
@@ -83,12 +82,13 @@ public class PaymentService {
         paymentDto.amount = payment.getAmount();
         paymentDto.usernameId = payment.getUser().getUsername();
         paymentDto.paymentReference = payment.getPaymentReference();
+        paymentDto.allocated = payment.getAllocated();
 
         if(payment.getLoan() != null) {
             paymentDto.loanId = payment.getLoan().getLoanId();
         }
-        if (payment.getInvestment() != null) {
-            paymentDto.investmentId = payment.getInvestment().getInvestmentId();
+        if(payment.getLoanRequest() != null) {
+            paymentDto.loanRequestId = payment.getLoanRequest().getId();
         }
 
         return paymentDto;

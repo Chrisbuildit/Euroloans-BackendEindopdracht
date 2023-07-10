@@ -4,9 +4,11 @@ import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
+import com.euroloans.eindopdracht.model.Investment;
 import com.euroloans.eindopdracht.model.Loan;
 import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.repository.InvestmentRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
@@ -23,10 +25,13 @@ public class LoanService {
 
     private final UserRepository userRepository;
 
-    public LoanService(LoanRepository loanRepository, LoanRequestRepository loanRequestRepository, UserRepository userRepository) {
+    private final InvestmentRepository investmentRepository;
+
+    public LoanService(LoanRepository loanRepository, LoanRequestRepository loanRequestRepository, UserRepository userRepository, InvestmentRepository investmentRepository) {
         this.loanRepository = loanRepository;
         this.loanRequestRepository = loanRequestRepository;
         this.userRepository = userRepository;
+        this.investmentRepository = investmentRepository;
     }
 
     public Loan createLoan(LoanDto loanDto) {
@@ -36,17 +41,30 @@ public class LoanService {
 
         UserIdentification userIdentification = new UserIdentification(userRepository);
         User user = userIdentification.getCurrentUser();
-        //Temporary disabled
-//        if(loanRequest.isApproved == Boolean.TRUE) {
+
+        List<Investment> investments = new ArrayList<>();
+        Iterable<Investment> ii = investmentRepository.findByLoanRequestId(loanRequest.getId());
+        int totalInvestmentBalance = 0;
+        for (Investment i : ii) {
+            totalInvestmentBalance += i.getBalance();
+            investments.add(i);
+        }
+
+        if(loanRequest.isApproved == Boolean.TRUE) {
+        if(totalInvestmentBalance==loanRequest.getAmount()) {
             newLoan.setLoanRequest(loanRequest);
+            newLoan.setBalance(loanRequest.getAmount());
+            newLoan.setInvestments(investments);
             newLoan.setCreatedBy(user);
             loanRepository.save(newLoan);
 
             return newLoan;
-        //Temporary disabled
-//        } else {
-//            throw new ResourceNotFoundException("The loanRequest first needs to be approved");
-//        }
+        } else {
+            throw new ResourceNotFoundException("Insufficient funding to get a loan");
+        }
+        } else {
+            throw new ResourceNotFoundException("The loanRequest first needs to be approved");
+        }
     }
 
     public LoanDto getLoan(Long loanId) {
@@ -73,6 +91,8 @@ public class LoanService {
         loanDto.loanRequestName = loan.getLoanRequest().getName();
         loanDto.usernameIds = loan.getLoanRequest().getUsers();
         loanDto.usernameId = loan.getCreatedBy().getUsername();
+        loanDto.balance = loan.getBalance();
+        loanDto.investments = loan.getInvestments();
 
         return loanDto;
     }

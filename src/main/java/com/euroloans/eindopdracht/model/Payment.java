@@ -1,4 +1,5 @@
 package com.euroloans.eindopdracht.model;
+import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,11 +22,17 @@ public class Payment {
 
     private String paymentReference;
 
+    private Boolean allocated = false;
+
+    @ManyToOne
+    private LoanRequest loanRequest;
+
+    //One-sided dependency
     @ManyToOne
     private Loan loan;
 
-    @ManyToOne
-    private Investment investment;
+//    @ManyToOne
+//    private Investment investment;
 
     @ManyToOne
     private User user;

@@ -1,5 +1,7 @@
 package com.euroloans.eindopdracht.dto;
 
+import lombok.Value;
+
 import java.time.LocalDate;
 
 public class PaymentDto {
@@ -10,11 +12,15 @@ public class PaymentDto {
     public Integer amount;
 
     public String paymentReference;
-    
-    public Long loanId;
-    
-    public Long investmentId;
-    
+
+    public Boolean allocated;
+
+    public Long loanRequestId;
+
+
     public String usernameId;
+
+
+    public Long loanId;
     
 }

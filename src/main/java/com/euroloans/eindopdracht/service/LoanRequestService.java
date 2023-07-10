@@ -44,16 +44,6 @@ public class LoanRequestService {
             throw new ResourceNotFoundException("You do not have access");
         }
 
-        //Iteration for list
-//        List<User> loanRequestUsers = new ArrayList<>();
-//        for (String username : loanRequestDto.usernameIds) {
-//            User user = userRepos.findById(username).orElseThrow(() ->
-//                    new ResourceNotFoundException("User not Found"));
-//
-//            loanRequestUsers.add(user);
-//        }
-//        loanRequest.setUsers(loanRequestUsers);
-
         loanRequestRepos.save(loanRequest);
 
         return loanRequest;
@@ -167,13 +157,6 @@ public class LoanRequestService {
         }
 
         loanRequestDto.usernameIds = map;
-
-        //Iteration for list
-    //        List<String> usernames = new ArrayList<>();
-    //        for (User u : loanRequest.getUsers()) {
-    //            usernames.add(u.getUsername());
-    //        }
-    //        loanRequestDto.usernameIds = usernames;
 
         return loanRequestDto;
     }
