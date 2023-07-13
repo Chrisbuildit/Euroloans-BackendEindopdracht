@@ -66,9 +66,12 @@ public class SecurityConfig  {
                 .requestMatchers(HttpMethod.GET, "/loans").hasAnyRole("EMPLOYEE", "LENDER", "OWNER")
                 .requestMatchers(HttpMethod.GET, "/payments").hasAnyRole("EMPLOYEE", "OWNER")
                 .requestMatchers(HttpMethod.POST, "/payments").hasAnyRole("BORROWER", "LENDER")
+                .requestMatchers(HttpMethod.PUT, "/payments").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "/investments").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/investments").hasAnyRole("OWNER", "LENDER")
-                .requestMatchers(HttpMethod.PUT, "/investments").hasAnyRole("BORROWER", "LENDER")
+                .requestMatchers(HttpMethod.POST, "/single/uploadDb").permitAll()
+                .requestMatchers(HttpMethod.GET, "/downloadFromDb/{fileId}").permitAll()
+
                 .requestMatchers("/**").authenticated()
                 .anyRequest().denyAll()
                 .and()

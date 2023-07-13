@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -45,17 +47,63 @@ public class PaymentService {
 
         Role role = user.getRole();
         if (role.getRolename().equals("ROLE_BORROWER")) {
-            Loan loan = loanRepository.findById(paymentDto.loanId).orElseThrow(() ->
-                    new ResourceNotFoundException("Loan not Found"));
-            payment.setLoan(loan);
-        } else {
-            LoanRequest loanRequest = loanRequestRepository.findById(paymentDto.loanRequestId).orElseThrow(() ->
-                    new ResourceNotFoundException("Loan not Found"));
-            payment.setLoanRequest(loanRequest);
+            payment.setLoanId(paymentDto.loanId);
         }
+
+        LoanRequest loanRequest = loanRequestRepository.findById(paymentDto.loanRequestId).orElseThrow(() ->
+                new ResourceNotFoundException("LoanRequest not Found"));
+        payment.setLoanRequest(loanRequest);
         paymentRepository.save(payment);
 
         return payment;
+    }
+
+    //Allocates no allocated payments to
+    public List<Investment> allocateAllPayments() {
+//        Optional<Investment> investmentOptional = investmentRepository.findById(id);
+//        if (investmentOptional.isPresent()) {
+//            Investment investment = investmentOptional.get();
+
+        //Copying of values
+//            Investment updatedInvestment;
+//            updatedInvestment = investment;
+
+        //Previous payments
+//            List<Long> prevPaymentIds = new ArrayList<>();
+//            Iterable<Payment> prevPayments = new ArrayList<>(investment.getPayments());
+//            for (Payment p : prevPayments)
+//                prevPaymentIds.add(p.getPaymentId());
+
+        List<Investment> updatedInvestments = new ArrayList<>();
+
+        Iterable<Investment> investments = investmentRepository.findAll();
+        Iterable<Payment> payments = paymentRepository.findAll();
+        for (Investment investment : investments) {
+            for (Payment payment : payments) {
+                //Matches payment with investment based on loanRequestId
+                if (Objects.equals(investment.getLoanRequestId(), payment.getLoanRequest().getId()) &&
+                        payment.getAllocated().equals(false)) {
+                    if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER")) {
+                        investment.increaseBalance(payment.getAmount());
+                        //Allocates payment to loan if loan exist and balance correspond with investment balance
+                        if(investment.getLoan()!=null && Objects.equals(investment.getBalance(), investment.getLoan().getLoanRequest().getAmount())) {
+                            investment.getLoan().increaseBalance(payment.getAmount());
+                        }
+                    } else if (payment.getUser().getRole().getRolename().equals("ROLE_BORROWER")) {
+                        investment.decreaseBalance(payment.getAmount());
+                        if(investment.getLoan()!=null) {
+                            investment.getLoan().decreaseBalance(payment.getAmount());
+                            payment.setLoanId(investment.getLoan().getLoanId());
+                    }}
+                    payment.setInvestmentId(investment.getInvestmentId());
+                    payment.setAllocated(true);
+                    updatedInvestments.add(investment);
+                    investmentRepository.save(investment);
+                    paymentRepository.save(payment);
+                }
+            }
+        }
+        return updatedInvestments;
     }
 
     public PaymentDto getPayment(Long paymentId) {
@@ -64,13 +112,15 @@ public class PaymentService {
         return transferToDto(p);
     }
 
-    public List<PaymentDto> getAllPayments() {
+    public List<PaymentDto> getUnallocatedPayments() {
         Iterable<Payment> pList = paymentRepository.findAll();
         List<PaymentDto> pDtoList = new ArrayList<>();
 
-        for(Payment p : pList) {
-            PaymentDto paymentDto = transferToDto(p);
-            pDtoList.add(paymentDto);
+        for(Payment payment : pList) {
+            if (payment.getAllocated().equals(false)) {
+                PaymentDto paymentDto = transferToDto(payment);
+                pDtoList.add(paymentDto);
+            }
         }
         return pDtoList;
     }
@@ -84,11 +134,14 @@ public class PaymentService {
         paymentDto.paymentReference = payment.getPaymentReference();
         paymentDto.allocated = payment.getAllocated();
 
-        if(payment.getLoan() != null) {
-            paymentDto.loanId = payment.getLoan().getLoanId();
+        if(payment.getLoanId() != null) {
+            paymentDto.loanId = payment.getLoanId();
         }
         if(payment.getLoanRequest() != null) {
             paymentDto.loanRequestId = payment.getLoanRequest().getId();
+        }
+        if(payment.getInvestmentId() != null) {
+            paymentDto.investmentId = payment.getInvestmentId();
         }
 
         return paymentDto;

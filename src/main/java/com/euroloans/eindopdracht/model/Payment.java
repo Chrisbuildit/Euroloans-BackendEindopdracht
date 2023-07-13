@@ -24,15 +24,13 @@ public class Payment {
 
     private Boolean allocated = false;
 
+    //One-sided
     @ManyToOne
     private LoanRequest loanRequest;
 
-    //One-sided dependency
-    @ManyToOne
-    private Loan loan;
+    private Long loanId;
 
-//    @ManyToOne
-//    private Investment investment;
+    private Long investmentId;
 
     @ManyToOne
     private User user;

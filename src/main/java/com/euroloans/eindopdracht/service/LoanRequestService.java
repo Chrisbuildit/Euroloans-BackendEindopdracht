@@ -88,7 +88,9 @@ public class LoanRequestService {
     public LoanRequest updateLoan(Long id, LoanRequestDto loanRequestDto) {
         Optional<LoanRequest> courseOptional = loanRequestRepos.findById(id);
         if (courseOptional.isPresent()) {
+            //Converting an Optional
             LoanRequest loanRequest = courseOptional.get();
+
             LoanRequest updatedLoanRequest = new LoanRequest();
 
             UserIdentification userIdentification = new UserIdentification(userRepos);

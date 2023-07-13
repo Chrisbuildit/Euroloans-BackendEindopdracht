@@ -17,9 +17,9 @@ public class PaymentDto {
 
     public Long loanRequestId;
 
-
     public String usernameId;
 
+    public Long investmentId;
 
     public Long loanId;
     

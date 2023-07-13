@@ -32,8 +32,13 @@ public class PaymentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PaymentDto>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.getAllPayments());
+    public ResponseEntity<List<PaymentDto>> getUnallocatedPayments() {
+        return ResponseEntity.ok(paymentService.getUnallocatedPayments());
+    }
+
+    @PutMapping
+    public ResponseEntity<List> allocateAllPayments() {
+        return new ResponseEntity<>(paymentService.allocateAllPayments(), HttpStatus.CREATED);
     }
 
 }

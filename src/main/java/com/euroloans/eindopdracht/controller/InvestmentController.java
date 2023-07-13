@@ -38,8 +38,4 @@ public class InvestmentController {
         return ResponseEntity.ok(investmentService.getAllInvestments());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Investment> updateInvestment(@PathVariable Long id) {
-        return new ResponseEntity<>(investmentService.adjustBalance(id), HttpStatus.CREATED);
-    }
 }

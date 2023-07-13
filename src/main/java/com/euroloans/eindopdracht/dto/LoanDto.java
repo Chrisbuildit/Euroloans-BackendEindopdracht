@@ -19,10 +19,8 @@ public class LoanDto {
 
     public List<Investment> investments;
 
-
-    public String usernameId;
+    public String createdBy;
 
     public Map<String, User> usernameIds;
-    //    public List<String> usernameIds;
 
 }

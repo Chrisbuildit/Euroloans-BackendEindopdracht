@@ -29,7 +29,7 @@ public class Investment {
     @Transient
     private String usernameId;
 
-    //One-sided implementation
+    //One-sided dependency
     @OneToMany
     private List<Payment> payments;
 
@@ -53,6 +53,4 @@ public class Investment {
         return balance;
     }
 
-    public void addPayment(Payment payment) {
-        payments.add(payment);    }
 }

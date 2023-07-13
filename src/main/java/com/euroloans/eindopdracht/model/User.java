@@ -39,11 +39,6 @@ public class User {
     @JsonIgnore
     private Collection<Loan> loans;
 
-//    public Object getUsernameAndRole(String username, String role) {
-//        Object test = new Object();
-//        test.
-//    }
-
     public String getUsername() {
         return username;
     }

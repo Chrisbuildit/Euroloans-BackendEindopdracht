@@ -22,14 +22,14 @@ public class Loan {
     @OneToOne
     LoanRequest loanRequest;
 
-    //No longer used
-//    @OneToMany(mappedBy = "loan")
-//    @JsonIgnore
-//    private List<Payment> payments;
+    //One-sided dependency
+    @OneToMany
+    private List<Payment> payments;
 
     @OneToMany(mappedBy = "loan")
     @JsonIgnore
     private List<Investment> investments;
+
 
     @ManyToOne
     private User createdBy;

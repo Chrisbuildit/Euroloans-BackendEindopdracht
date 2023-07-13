@@ -4,10 +4,7 @@ import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
-import com.euroloans.eindopdracht.model.Investment;
-import com.euroloans.eindopdracht.model.Loan;
-import com.euroloans.eindopdracht.model.LoanRequest;
-import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.InvestmentRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
@@ -42,25 +39,26 @@ public class LoanService {
         UserIdentification userIdentification = new UserIdentification(userRepository);
         User user = userIdentification.getCurrentUser();
 
-        List<Investment> investments = new ArrayList<>();
-        Iterable<Investment> ii = investmentRepository.findByLoanRequestId(loanRequest.getId());
+        Iterable<Investment> investments = investmentRepository.findByLoanRequestId(loanRequest.getId());
         int totalInvestmentBalance = 0;
-        for (Investment i : ii) {
-            totalInvestmentBalance += i.getBalance();
-            investments.add(i);
+        for (Investment investment : investments) {
+            totalInvestmentBalance += investment.getBalance();
         }
 
         if(loanRequest.isApproved == Boolean.TRUE) {
         if(totalInvestmentBalance==loanRequest.getAmount()) {
             newLoan.setLoanRequest(loanRequest);
             newLoan.setBalance(loanRequest.getAmount());
-            newLoan.setInvestments(investments);
             newLoan.setCreatedBy(user);
+            for (Investment investment : investments) {
+                //Example of implementing One-To-Many relationship. The many side contains the one-side
+                investment.setLoan(newLoan);
+            }
             loanRepository.save(newLoan);
 
             return newLoan;
         } else {
-            throw new ResourceNotFoundException("Insufficient funding to get a loan");
+            throw new ResourceNotFoundException("The available funding does not match the loanAmount requested");
         }
         } else {
             throw new ResourceNotFoundException("The loanRequest first needs to be approved");
@@ -90,7 +88,7 @@ public class LoanService {
         loanDto.loanRequestId = loan.getLoanRequest().getId();
         loanDto.loanRequestName = loan.getLoanRequest().getName();
         loanDto.usernameIds = loan.getLoanRequest().getUsers();
-        loanDto.usernameId = loan.getCreatedBy().getUsername();
+        loanDto.createdBy = loan.getCreatedBy().getUsername();
         loanDto.balance = loan.getBalance();
         loanDto.investments = loan.getInvestments();
 

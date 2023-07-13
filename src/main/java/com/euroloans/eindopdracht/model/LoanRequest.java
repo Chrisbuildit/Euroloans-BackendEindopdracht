@@ -34,7 +34,6 @@ public class LoanRequest {
         inverseJoinColumns = {@JoinColumn(name = "users_id", referencedColumnName = "id")})
 //    @MapKeyJoinColumn(name = "roles_id")
     @MapKey(name = "username")
-//    public Collection<User> users;
     public Map<String, User> users = new HashMap<>();
 
     public Long getId() {

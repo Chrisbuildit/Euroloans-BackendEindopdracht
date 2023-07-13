@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,57 +47,19 @@ public class InvestmentService {
         investment.addUsers(employee);
 
         List<Payment> investmentPayment = new ArrayList<>();
-        for (Long p : investmentDto.paymentList) {
-            Optional<Payment> optionalPayment = paymentRepository.findById(p);
+        for (Long paymentId : investmentDto.paymentList) {
+
+            Optional<Payment> optionalPayment = paymentRepository.findById(paymentId);
             optionalPayment.ifPresent(investmentPayment::add);
             optionalPayment.ifPresent(payment -> investment.increaseBalance(payment.getAmount()));
             optionalPayment.ifPresent(payment -> investment.setLoanRequestId(payment.getLoanRequest().getId()));
             optionalPayment.ifPresent(payment -> payment.setAllocated(true));
+            optionalPayment.ifPresent(payment -> payment.setInvestmentId(investment.getInvestmentId()));
         }
         investment.setPayments(investmentPayment);
         investmentRepository.save(investment);
 
         return investment;
-    }
-
-    public Investment adjustBalance(Long id) {
-        Optional<Investment> investmentOptional = investmentRepository.findById(id);
-        if (investmentOptional.isPresent()) {
-            Investment investment = investmentOptional.get();
-
-            //Copying of values
-            Investment updatedInvestment;
-            updatedInvestment = investment;
-
-            UserIdentification userIdentification = new UserIdentification(userRepository);
-            User user = userIdentification.getCurrentUser();
-
-            //Previous payments
-//            List<Long> prevPaymentIds = new ArrayList<>();
-//            Iterable<Payment> prevPayments = new ArrayList<>(investment.getPayments());
-//            for (Payment p : prevPayments)
-//                prevPaymentIds.add(p.getPaymentId());
-
-            Iterable<Payment> payments = paymentRepository.findAll();
-            for (Payment payment : payments) {
-
-                if (payment.getAllocated().equals(false)) {
-                    if (user.getRole().getRolename().equals("ROLE_LENDER")) {
-                        updatedInvestment.increaseBalance(payment.getAmount());
-                    } else if (user.getRole().getRolename().equals("ROLE_BORROWER")) {
-                        updatedInvestment.decreaseBalance(payment.getAmount());
-                    }
-                    updatedInvestment.addPayment(payment);
-                    updatedInvestment.setLoanRequestId(investment.getLoanRequestId());
-                    payment.setAllocated(true);
-                }
-            }
-
-            investmentRepository.save(updatedInvestment);
-            return updatedInvestment;
-    } else {
-        throw new ResourceNotFoundException("You do not have access");
-        }
     }
 
     public InvestmentDto getInvestment(Long investmentId) {
