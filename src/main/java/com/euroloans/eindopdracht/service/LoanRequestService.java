@@ -110,12 +110,10 @@ public class LoanRequestService {
 
                     updatedLoanRequest.setAmount(loanRequestDto.amount);
                     updatedLoanRequest.setApproved(loanRequest.getApproved());
-
                 } else {
                     throw new ResourceNotFoundException("You do not have access");
                 }
             }
-
             updatedLoanRequest.setUsernameId("Not applicable");
             updatedLoanRequest.setName(loanRequest.getName());
             updatedLoanRequest.setId(loanRequest.getId());
@@ -154,7 +152,7 @@ public class LoanRequestService {
         Map<String , Map<String, String>> map = new HashMap<>();
         Map<String , String> innermap = new HashMap<>();
         for (Map.Entry<String, User> set : loanRequest.getUsers().entrySet()) {
-            innermap.put("username", set.getValue().getUsername());
+            innermap.put("username", set.getValue().getUsernameId());
             map.put(set.getValue().getRole().getRolename(), innermap);
         }
 

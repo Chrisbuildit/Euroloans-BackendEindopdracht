@@ -59,22 +59,9 @@ public class PaymentService {
     }
 
     //Allocates no allocated payments to
-    public List<Investment> allocateAllPayments() {
-//        Optional<Investment> investmentOptional = investmentRepository.findById(id);
-//        if (investmentOptional.isPresent()) {
-//            Investment investment = investmentOptional.get();
+    public List<Payment> allocateAllPayments() {
 
-        //Copying of values
-//            Investment updatedInvestment;
-//            updatedInvestment = investment;
-
-        //Previous payments
-//            List<Long> prevPaymentIds = new ArrayList<>();
-//            Iterable<Payment> prevPayments = new ArrayList<>(investment.getPayments());
-//            for (Payment p : prevPayments)
-//                prevPaymentIds.add(p.getPaymentId());
-
-        List<Investment> updatedInvestments = new ArrayList<>();
+        List<Payment> allocatedPayments = new ArrayList<>();
 
         Iterable<Investment> investments = investmentRepository.findAll();
         Iterable<Payment> payments = paymentRepository.findAll();
@@ -83,27 +70,25 @@ public class PaymentService {
                 //Matches payment with investment based on loanRequestId
                 if (Objects.equals(investment.getLoanRequestId(), payment.getLoanRequest().getId()) &&
                         payment.getAllocated().equals(false)) {
-                    if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER")) {
-                        investment.increaseBalance(payment.getAmount());
-                        //Allocates payment to loan if loan exist and balance correspond with investment balance
-                        if(investment.getLoan()!=null && Objects.equals(investment.getBalance(), investment.getLoan().getLoanRequest().getAmount())) {
-                            investment.getLoan().increaseBalance(payment.getAmount());
+                    if(investment.getLoans()!=null && Objects.equals(investment.getBalance(), investment.getLoans().getBalance())) {
+                        payment.setLoanId(investment.getLoans().getLoanId());
+                        payment.setInvestmentId(investment.getInvestmentId());
+                        payment.setAllocated(true);
+                        allocatedPayments.add(payment);
+                        if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER")) {
+                            investment.increaseBalance(payment.getAmount());
+                            investment.getLoans().increaseBalance(payment.getAmount());
+                        } else if (payment.getUser().getRole().getRolename().equals("ROLE_BORROWER")) {
+                            investment.decreaseBalance(payment.getAmount());
+                            investment.getLoans().decreaseBalance(payment.getAmount());
                         }
-                    } else if (payment.getUser().getRole().getRolename().equals("ROLE_BORROWER")) {
-                        investment.decreaseBalance(payment.getAmount());
-                        if(investment.getLoan()!=null) {
-                            investment.getLoan().decreaseBalance(payment.getAmount());
-                            payment.setLoanId(investment.getLoan().getLoanId());
-                    }}
-                    payment.setInvestmentId(investment.getInvestmentId());
-                    payment.setAllocated(true);
-                    updatedInvestments.add(investment);
-                    investmentRepository.save(investment);
-                    paymentRepository.save(payment);
+                        investmentRepository.save(investment);
+                        paymentRepository.save(payment);
+                    }
                 }
             }
         }
-        return updatedInvestments;
+        return allocatedPayments;
     }
 
     public PaymentDto getPayment(Long paymentId) {
@@ -130,7 +115,7 @@ public class PaymentService {
         paymentDto.paymentId = payment.getPaymentId();
         paymentDto.date = payment.getDate();
         paymentDto.amount = payment.getAmount();
-        paymentDto.usernameId = payment.getUser().getUsername();
+        paymentDto.usernameId = payment.getUser().getUsernameId();
         paymentDto.paymentReference = payment.getPaymentReference();
         paymentDto.allocated = payment.getAllocated();
 

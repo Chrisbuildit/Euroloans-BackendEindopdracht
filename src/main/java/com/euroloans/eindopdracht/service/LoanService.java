@@ -49,10 +49,10 @@ public class LoanService {
         if(totalInvestmentBalance==loanRequest.getAmount()) {
             newLoan.setLoanRequest(loanRequest);
             newLoan.setBalance(loanRequest.getAmount());
-            newLoan.setCreatedBy(user);
+            newLoan.addUsers(user);
             for (Investment investment : investments) {
                 //Example of implementing One-To-Many relationship. The many side contains the one-side
-                investment.setLoan(newLoan);
+                investment.setLoans(newLoan);
             }
             loanRepository.save(newLoan);
 
@@ -86,9 +86,7 @@ public class LoanService {
         LoanDto loanDto = new LoanDto();
         loanDto.loanId = loan.getLoanId();
         loanDto.loanRequestId = loan.getLoanRequest().getId();
-        loanDto.loanRequestName = loan.getLoanRequest().getName();
-        loanDto.usernameIds = loan.getLoanRequest().getUsers();
-        loanDto.createdBy = loan.getCreatedBy().getUsername();
+        loanDto.usernameIds = loan.getUsers();
         loanDto.balance = loan.getBalance();
         loanDto.investments = loan.getInvestments();
 
