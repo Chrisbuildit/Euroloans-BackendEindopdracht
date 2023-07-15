@@ -1,5 +1,6 @@
 package com.euroloans.eindopdracht.security;
 
+import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -66,7 +67,15 @@ public class JwtService {
     public Boolean validateToken(String token, UserDetails
             userDetails) {
         final String username = extractUsername(token);
+
         return username.equals(userDetails.getUsername()) &&
                 !isTokenExpired(token);
+        //Alternatief?
+//        if (username.equals(userDetails.getUsername())) {
+//            return !isTokenExpired(token);
+//        } else {
+//            throw new ResourceNotFoundException("Test");
+//        }
+
     }
 }

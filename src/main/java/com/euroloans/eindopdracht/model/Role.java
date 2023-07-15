@@ -1,10 +1,7 @@
 package com.euroloans.eindopdracht.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 
@@ -12,10 +9,8 @@ import java.util.Collection;
 @Table(name = "roles")
 public class Role {
     @Id
+    @Column(name = "id")
     private String rolename;
-
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
 
     public String getRolename() {
         return rolename;

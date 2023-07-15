@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,16 +11,33 @@ import java.util.List;
 @Table(name="users")
 public class User {
     @Id
-    public String username;
+    //Werk nie
+    @Column(unique=true, name = "id")
+    private String username;
 
+    @JsonIgnore
     private String password;
+
+    @OneToOne
+    @JoinColumn(name = "roles_id")
+    public Role role;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    public List<LoanApplication> loanApplications;
+    private Collection<Payment> payments;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles;
+    //Is mappedBy nodig hier?
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Collection<LoanRequest> loanRequests;
+
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Collection<Investment> investments;
+
+    @OneToMany(mappedBy = "createdBy")
+    @JsonIgnore
+    private Collection<Loan> loans;
 
     public String getUsername() {
         return username;
@@ -29,12 +47,12 @@ public class User {
         this.username = username;
     }
 
-    public List<LoanApplication> getLoanApplications() {
-        return loanApplications;
+    public Collection<LoanRequest> getLoanRequests() {
+        return loanRequests;
     }
 
-    public void setLoanApplications(List<LoanApplication> loanApplications) {
-        this.loanApplications = loanApplications;
+    public void setLoanRequests(Collection<LoanRequest> loanRequests) {
+        this.loanRequests = loanRequests;
     }
 
     public String getPassword() {
@@ -45,11 +63,35 @@ public class User {
         this.password = password;
     }
 
-    public Collection<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Collection<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(Collection<Payment> payments) {
+        this.payments = payments;
+    }
+
+    public Collection<Investment> getInvestments() {
+        return investments;
+    }
+
+    public void setInvestments(Collection<Investment> investments) {
+        this.investments = investments;
+    }
+
+    public Collection<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(Collection<Loan> loans) {
+        this.loans = loans;
     }
 }
