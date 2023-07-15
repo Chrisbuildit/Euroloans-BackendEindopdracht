@@ -20,10 +20,6 @@ public class Investment {
 
     private Integer balance = 0;
 
-    private Integer interest;
-
-    private Double ROI;
-
     private Long loanRequestId;
 
     @Transient
@@ -34,7 +30,7 @@ public class Investment {
     private List<Payment> payments;
 
     @ManyToOne
-    private Loan loan;
+    private Loan loans;
 
     @ManyToMany
     private Collection<User> users = new ArrayList<>();

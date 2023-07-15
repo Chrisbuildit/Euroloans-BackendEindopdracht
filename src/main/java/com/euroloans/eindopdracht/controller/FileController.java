@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.controller;
 
 import com.euroloans.eindopdracht.model.File;
 import com.euroloans.eindopdracht.repository.FileRepository;
+import com.euroloans.eindopdracht.service.FileService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,34 +15,24 @@ import java.io.IOException;
 @RestController
 public class FileController {
 
-    private final FileRepository fileRepository;
+    private final FileService fileService;
 
-    public FileController(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
     @PostMapping("/single/uploadDb")
     public ResponseEntity<String> singleFileUpload(@RequestParam("pdf") MultipartFile pdf) throws IOException {
-        File uploadfile = new File();
-        uploadfile.setFilename(pdf.getOriginalFilename());
-        uploadfile.setDocfile(pdf.getBytes());
-
-        fileRepository.save(uploadfile);
-        return ResponseEntity.ok("Geslaagd");
+        return new ResponseEntity<>(fileService.singleFileUpload(pdf), HttpStatus.CREATED);
     }
 
     @GetMapping("/downloadFromDb/{fileId}")
     public ResponseEntity<byte[]> downloadSingleFile(@PathVariable Long fileId) {
-        File file = fileRepository.findById(fileId).orElseThrow(RuntimeException::new);
-        byte[] docFile = file.getDocfile();
+        byte[] docFile = fileService.downloadSingleFile(fileId);
 
-        if (docFile == null) {
-            throw new RuntimeException("there is no file yet.");
-        }
         HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "file" + file.getFilename() + ".png");
+        headers.setContentDispositionFormData("attachment", "file" + fileId);
         headers.setContentLength(docFile.length);
 
         return new ResponseEntity<>(docFile, headers, HttpStatus.OK);

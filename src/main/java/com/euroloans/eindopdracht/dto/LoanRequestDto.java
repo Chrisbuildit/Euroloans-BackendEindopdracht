@@ -19,8 +19,6 @@ public class LoanRequestDto {
 
     public String usernameId;
 
-    //    @Size(min=2)
-//    public List<String> usernameIds;
     public Map<String, Map<String, String>> usernameIds;
 
     public String getName() {

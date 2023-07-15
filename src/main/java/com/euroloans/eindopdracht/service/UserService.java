@@ -2,9 +2,7 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
-import com.euroloans.eindopdracht.model.LoanRequest;
-import com.euroloans.eindopdracht.model.Role;
-import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.RoleRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +29,7 @@ public class UserService {
 
     public User createUser(UserDto userDto) {
         User newUser = new User();
-        newUser.setUsername(userDto.username);
+        newUser.setUsernameId(userDto.username);
         newUser.setPassword(encoder.encode(userDto.password));
 
         Role tempRole = roleRepos.findById("ROLE_" + userDto.rolenameId).orElseThrow(() -> new ResourceNotFoundException("Role not Found"));
@@ -61,16 +59,27 @@ public class UserService {
 
     public UserDto transferToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.username = user.getUsername();
+        userDto.username = user.getUsernameId();
         userDto.password = "Confidential";
         userDto.rolenameId = user.getRole().getRolename();
-        userDto.loans = new ArrayList<>(user.getLoans());
 
         List<String> loanRequests = new ArrayList<>();
         for (LoanRequest l : user.getLoanRequests()) {
             loanRequests.add(l.getName());
         }
         userDto.loanRequests = loanRequests;
+
+        List<Long> loans = new ArrayList<>();
+        for (Loan loan : user.getLoans()) {
+            loans.add(loan.getLoanId());
+        }
+            userDto.loans = loans;
+
+        List<Long> investments = new ArrayList<>();
+        for (Investment investment : user.getInvestments()) {
+            investments.add(investment.getInvestmentId());
+        }
+            userDto.investments = investments;
 
         return userDto;
     }

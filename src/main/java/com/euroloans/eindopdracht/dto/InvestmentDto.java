@@ -15,13 +15,7 @@ public class InvestmentDto {
 
     public Integer balance;
 
-    public Integer interest;
-
-    public Double ROI;
-
     public List<Long> paymentList;
-
-    public List<Payment> payments;
 
     public Long loanRequestId;
 
@@ -29,5 +23,6 @@ public class InvestmentDto {
 
     public String usernameId;
 
-    public Collection<User> users;
+
+
 }

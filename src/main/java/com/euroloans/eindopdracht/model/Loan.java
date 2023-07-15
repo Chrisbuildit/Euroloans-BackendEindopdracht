@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,13 +27,16 @@ public class Loan {
     @OneToMany
     private List<Payment> payments;
 
-    @OneToMany(mappedBy = "loan")
+    @OneToMany(mappedBy = "loans")
     @JsonIgnore
     private List<Investment> investments;
 
+    @ManyToMany
+    private Collection<User> users = new ArrayList<>();
 
-    @ManyToOne
-    private User createdBy;
+    public void addUsers(User user) {
+        users.add(user);
+    }
 
     public Integer increaseBalance(Integer i) {
         balance = balance + i;

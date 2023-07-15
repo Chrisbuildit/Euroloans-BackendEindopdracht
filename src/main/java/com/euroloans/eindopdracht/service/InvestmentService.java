@@ -40,26 +40,27 @@ public class InvestmentService {
 
         User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
                 new ResourceNotFoundException("User not Found"));
-        investment.addUsers(lender);
 
         UserIdentification userIdentification = new UserIdentification(userRepository);
         User employee = userIdentification.getCurrentUser();
-        investment.addUsers(employee);
 
         List<Payment> investmentPayment = new ArrayList<>();
         for (Long paymentId : investmentDto.paymentList) {
+            Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new ResourceNotFoundException("PaymentId not found"));
+            if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER") && payment.getAllocated().equals(false)) {
+                investmentPayment.add(payment);
+                investment.increaseBalance(payment.getAmount());
+                investment.setLoanRequestId(payment.getLoanRequest().getId());
+                investment.addUsers(lender);
+                investment.addUsers(employee);
+                payment.setAllocated(true);
+                payment.setInvestmentId(investment.getInvestmentId());
 
-            Optional<Payment> optionalPayment = paymentRepository.findById(paymentId);
-            optionalPayment.ifPresent(investmentPayment::add);
-            optionalPayment.ifPresent(payment -> investment.increaseBalance(payment.getAmount()));
-            optionalPayment.ifPresent(payment -> investment.setLoanRequestId(payment.getLoanRequest().getId()));
-            optionalPayment.ifPresent(payment -> payment.setAllocated(true));
-            optionalPayment.ifPresent(payment -> payment.setInvestmentId(investment.getInvestmentId()));
+                investment.setPayments(investmentPayment);
+                investmentRepository.save(investment);
+            }
         }
-        investment.setPayments(investmentPayment);
-        investmentRepository.save(investment);
-
-        return investment;
+            return investment;
     }
 
     public InvestmentDto getInvestment(Long investmentId) {
@@ -82,13 +83,21 @@ public class InvestmentService {
     public InvestmentDto transferToDto(Investment investment) {
         InvestmentDto investmentDto = new InvestmentDto();
         investmentDto.investmentId = investment.getInvestmentId();
-        investmentDto.users = investment.getUsers();
         investmentDto.balance = investment.getBalance();
         investmentDto.loanRequestId = investment.getLoanRequestId();
-        investmentDto.payments = investment.getPayments();
 
-        if(investment.getLoan() != null) {
-            investmentDto.loanId = investment.getLoan().getLoanId();
+        for (User user : investment.getUsers()) {
+            investmentDto.usernameId = user.getUsernameId();
+        }
+
+        List<Long> payments = new ArrayList<>();
+        for (Payment payment : investment.getPayments()) {
+            payments.add(payment.getPaymentId());
+        }
+        investmentDto.paymentList = payments;
+
+        if(investment.getLoans() != null) {
+            investmentDto.loanId = investment.getLoans().getLoanId();
         }
 
         return investmentDto;
