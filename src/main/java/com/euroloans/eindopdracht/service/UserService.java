@@ -5,12 +5,12 @@ import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.RoleRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,18 +19,21 @@ public class UserService {
 
     private final RoleRepository roleRepos;
 
-    private final PasswordEncoder encoder;
+    public PasswordEncoder passwordEncoder(String password) {
+        return new BCryptPasswordEncoder();
+    }
 
-    public UserService(UserRepository userRepos, RoleRepository roleRepos, PasswordEncoder encoder) {
+    public UserService(UserRepository userRepos, RoleRepository roleRepos) {
         this.userRepos = userRepos;
         this.roleRepos = roleRepos;
-        this.encoder = encoder;
     }
+
 
     public User createUser(UserDto userDto) {
         User newUser = new User();
-        newUser.setUsernameId(userDto.username);
-        newUser.setPassword(encoder.encode(userDto.password));
+        newUser.setUsername(userDto.username);
+
+        newUser.setPassword(passwordEncoder(userDto.password).encode(userDto.password));
 
         Role tempRole = roleRepos.findById("ROLE_" + userDto.rolenameId).orElseThrow(() -> new ResourceNotFoundException("Role not Found"));
         newUser.setRole(tempRole);
@@ -59,28 +62,33 @@ public class UserService {
 
     public UserDto transferToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.username = user.getUsernameId();
+        userDto.username = user.getUsername();
         userDto.password = "Confidential";
         userDto.rolenameId = user.getRole().getRolename();
 
         List<String> loanRequests = new ArrayList<>();
-        for (LoanRequest l : user.getLoanRequests()) {
-            loanRequests.add(l.getName());
+        if(user.getLoanRequests()!=null) {
+            for (LoanRequest l : user.getLoanRequests()) {
+                loanRequests.add(l.getName());
+            }
+            userDto.loanRequests = loanRequests;
         }
-        userDto.loanRequests = loanRequests;
 
         List<Long> loans = new ArrayList<>();
-        for (Loan loan : user.getLoans()) {
-            loans.add(loan.getLoanId());
-        }
+        if(user.getLoans()!=null) {
+            for (Loan loan : user.getLoans()) {
+                loans.add(loan.getLoanId());
+            }
             userDto.loans = loans;
+        }
 
         List<Long> investments = new ArrayList<>();
-        for (Investment investment : user.getInvestments()) {
-            investments.add(investment.getInvestmentId());
-        }
+        if(user.getInvestments()!=null) {
+            for (Investment investment : user.getInvestments()) {
+                investments.add(investment.getInvestmentId());
+            }
             userDto.investments = investments;
-
+        }
         return userDto;
     }
 }

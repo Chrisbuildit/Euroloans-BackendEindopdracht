@@ -87,7 +87,7 @@ public class InvestmentService {
         investmentDto.loanRequestId = investment.getLoanRequestId();
 
         for (User user : investment.getUsers()) {
-            investmentDto.usernameId = user.getUsernameId();
+            investmentDto.usernameId = user.getUsername();
         }
 
         List<Long> payments = new ArrayList<>();

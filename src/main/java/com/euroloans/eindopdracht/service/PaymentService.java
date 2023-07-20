@@ -115,7 +115,7 @@ public class PaymentService {
         paymentDto.paymentId = payment.getPaymentId();
         paymentDto.date = payment.getDate();
         paymentDto.amount = payment.getAmount();
-        paymentDto.usernameId = payment.getUser().getUsernameId();
+        paymentDto.usernameId = payment.getUser().getUsername();
         paymentDto.paymentReference = payment.getPaymentReference();
         paymentDto.allocated = payment.getAllocated();
 

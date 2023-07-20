@@ -34,7 +34,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsernameId();
+        return user.getUsername();
     }
 
     @Override

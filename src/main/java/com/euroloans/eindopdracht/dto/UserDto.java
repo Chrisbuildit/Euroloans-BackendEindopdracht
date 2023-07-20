@@ -25,4 +25,12 @@ public class UserDto {
     public List<Long> loans;
 
     public List<String> loanRequests;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRolenameId() {
+        return rolenameId;
+    }
 }

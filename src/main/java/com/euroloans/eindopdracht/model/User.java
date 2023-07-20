@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class User {
     @Id
     //Werk nie
     @Column(unique=true, name = "id")
-    private String usernameId;
+    private String username;
 
     @JsonIgnore
     private String password;
@@ -43,5 +44,9 @@ public class User {
     @JsonIgnore
     private Collection<Loan> loans;
 
-
+//    public User(String username, String password, Role role) {
+//        this.username = username;
+//        this.password = password;
+//        this.role = role;
+//    }
 }

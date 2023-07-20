@@ -152,7 +152,7 @@ public class LoanRequestService {
         Map<String , Map<String, String>> map = new HashMap<>();
         Map<String , String> innermap = new HashMap<>();
         for (Map.Entry<String, User> set : loanRequest.getUsers().entrySet()) {
-            innermap.put("username", set.getValue().getUsernameId());
+            innermap.put("username", set.getValue().getUsername());
             map.put(set.getValue().getRole().getRolename(), innermap);
         }
 
