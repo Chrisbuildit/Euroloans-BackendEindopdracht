@@ -7,6 +7,7 @@ import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.RoleRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import com.euroloans.eindopdracht.service.LoanRequestService;
 import com.euroloans.eindopdracht.service.UserIdentification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,62 +42,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class LoanRequestControllerIntegrationTest {
+
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
-    UserRepository userRepository;
+    UserRepository userRepos;
     @Autowired
     RoleRepository roleRepository;
-
     @Autowired
     LoanRequestRepository loanRequestRepository;
 
     LoanRequestDto loanRequestDto;
 
-    User user;
+    User user = new User();
+    User deleteUser;
     Role role;
 
     LoanRequest loanRequest;
-    LoanRequest loa;
 
     @BeforeEach
     void setup() {
         role = new Role();
         role.setRolename("ROLE_BORROWER");
 
-        roleRepository.save(role);
-
-        user = new User();
         user.setUsername("BOR");
         user.setPassword("test");
         user.setRole(role);
 
+        roleRepository.save(role);
+
+        deleteUser = new User();
+        deleteUser.setUsername("test");
+
         loanRequestDto = new LoanRequestDto();
         loanRequestDto.amount = 3;
-        loanRequestDto.usernameId = "BOR";
+        loanRequestDto.usernameId = "test";
         loanRequestDto.name = "test";
         loanRequestDto.isApproved = false;
 
-        userRepository.save(user);
-
         Map<String, User> users = new HashMap<>();
-        users.put("BORROWER", user);
+        users.put("Borrower", deleteUser);
 
         loanRequest = new LoanRequest();
         loanRequest.setId(1L);
         loanRequest.setUsers(users);
-        loanRequest.setUsernameId(loanRequestDto.usernameId);
-        loa = loanRequestRepository.save(loanRequest);
+        loanRequestRepository.save(loanRequest);
+
+        userRepos.save(user);
     }
-
-    @Test
-    void shouldDeleteLoanRequest() throws Exception {
-        when(UserIdentification.findById(anyString())).thenReturn(Optional.of(user1));
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/loanRequests/" + loa.getId())).andExpect(status().isNoContent());
-    }
-
 
     @Test
     void shouldCreateLoanRequest() throws Exception {
@@ -116,4 +110,10 @@ class LoanRequestControllerIntegrationTest {
                 throw new RuntimeException(e);
             }
         }
+
+    @Test
+    void shouldDeleteLoanRequest() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/loanRequests/" + loanRequest.getId())).andExpect(status().isNoContent());
+    }
 }

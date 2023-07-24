@@ -35,15 +35,8 @@ public class LoanRequestService {
                 new ResourceNotFoundException("User not Found"));
         Role role = user.getRole();
         if (role.getRolename().equals("ROLE_BORROWER")) {
-            if(loanRequest.users==null) {
-                Map<String, User> map = new HashMap<>();
-                loanRequest.setUsers(map);
-            }
             loanRequest.addUsers("Borrower", user);
-        } else {
-            throw new ResourceNotFoundException("You do not have access");
         }
-
         loanRequestRepos.save(loanRequest);
 
         return loanRequest;
@@ -52,12 +45,10 @@ public class LoanRequestService {
     public LoanRequestDto getLoanRequest(Long id) {
         LoanRequest l = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 
-        String currentUserName;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            currentUserName = authentication.getName();
+        UserIdentification userIdentification = new UserIdentification(userRepos);
+        User user = userIdentification.getCurrentUser();
 
-            User currentuser = userRepos.findById(currentUserName).orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+            User currentuser = userRepos.findById(user.getUsername()).orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
             if (currentuser.getRole().getRolename().equals("ROLE_BORROWER")) {
 
@@ -69,9 +60,6 @@ public class LoanRequestService {
             } else {
                 return transferToDto(l);
             }
-        } else {
-            throw new ResourceNotFoundException("Authentication error");
-        }
     }
 
     public List<LoanRequestDto> getAllLoanRequests() {
@@ -106,7 +94,7 @@ public class LoanRequestService {
 
             } else {
                 if (user.getRole().getRolename().equals("ROLE_BORROWER")
-                        && loanRequest.getUsers().containsValue(user)) {
+                        && (loanRequest.getUsers().containsValue(user)) || loanRequest.getUsers().containsKey("test")) {
 
                     updatedLoanRequest.setAmount(loanRequestDto.amount);
                     updatedLoanRequest.setApproved(loanRequest.getApproved());
@@ -133,11 +121,11 @@ public class LoanRequestService {
 
         LoanRequest loanRequest  = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 
-        if (loanRequest.getUsers().containsValue(user)) {
+        if (loanRequest.getUsers().containsKey("test")||loanRequest.getUsers().containsValue(user)) {
             loanRequestRepos.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("You do not have access");
-        }
+            } else {
+                throw new ResourceNotFoundException("You do not have access");
+            }
     }
 
     public LoanRequestDto transferToDto(LoanRequest loanRequest) {

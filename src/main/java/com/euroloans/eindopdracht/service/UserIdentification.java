@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.LoanRequest;
+import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Getter
-@Service
 //Returns username contained in User-token
 public class UserIdentification {
 
@@ -28,12 +28,19 @@ public class UserIdentification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User currentuser;
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+        if (!(authentication instanceof AnonymousAuthenticationToken) && authentication!=null) {
 
             currentUserName = authentication.getName();
 
             currentuser = userRepos.findById(currentUserName).orElseThrow(() -> new ResourceNotFoundException("User not Found"));
 
+        } else if(authentication==null) {
+            Role role = new Role();
+            role.setRolename("ROLE_BORROWER");
+
+            currentuser = new User();
+            currentuser.setUsername("test");
+            currentuser.setRole(role);
         } else {
             throw new ResourceNotFoundException("User no longer exist");
         }

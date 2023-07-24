@@ -48,6 +48,8 @@ public class PaymentService {
         Role role = user.getRole();
         if (role.getRolename().equals("ROLE_BORROWER")) {
             payment.setLoanId(paymentDto.loanId);
+        } else {
+            throw new ResourceNotFoundException("You do not have access");
         }
 
         LoanRequest loanRequest = loanRequestRepository.findById(paymentDto.loanRequestId).orElseThrow(() ->
