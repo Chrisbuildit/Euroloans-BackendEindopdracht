@@ -7,9 +7,7 @@ import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.euroloans.eindopdracht.security.UserIdentification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

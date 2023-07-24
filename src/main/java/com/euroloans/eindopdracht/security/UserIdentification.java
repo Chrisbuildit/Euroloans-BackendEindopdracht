@@ -1,4 +1,4 @@
-package com.euroloans.eindopdracht.service;
+package com.euroloans.eindopdracht.security;
 
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.LoanRequest;

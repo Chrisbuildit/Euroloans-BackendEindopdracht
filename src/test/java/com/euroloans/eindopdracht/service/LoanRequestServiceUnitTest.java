@@ -4,18 +4,15 @@ import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
-import com.euroloans.eindopdracht.repository.InvestmentRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
-import com.euroloans.eindopdracht.repository.RoleRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import com.euroloans.eindopdracht.security.UserIdentification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.*;
@@ -28,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 //@MockitoSettings(strictness = Strictness.LENIENT)
-class LoanRequestServiceTest {
+class LoanRequestServiceUnitTest {
 
     @Mock
     UserRepository userRepos;

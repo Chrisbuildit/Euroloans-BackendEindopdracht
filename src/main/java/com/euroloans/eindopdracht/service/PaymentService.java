@@ -1,17 +1,15 @@
 package com.euroloans.eindopdracht.service;
 
-import com.euroloans.eindopdracht.dto.LoanDto;
-import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.PaymentDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.*;
+import com.euroloans.eindopdracht.security.UserIdentification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -48,8 +46,6 @@ public class PaymentService {
         Role role = user.getRole();
         if (role.getRolename().equals("ROLE_BORROWER")) {
             payment.setLoanId(paymentDto.loanId);
-        } else {
-            throw new ResourceNotFoundException("You do not have access");
         }
 
         LoanRequest loanRequest = loanRequestRepository.findById(paymentDto.loanRequestId).orElseThrow(() ->

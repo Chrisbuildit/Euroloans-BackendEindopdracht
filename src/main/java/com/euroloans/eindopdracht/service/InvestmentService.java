@@ -1,21 +1,17 @@
 package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.InvestmentDto;
-import com.euroloans.eindopdracht.dto.LoanDto;
-import com.euroloans.eindopdracht.dto.LoanRequestDto;
-import com.euroloans.eindopdracht.dto.PaymentDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.InvestmentRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import com.euroloans.eindopdracht.repository.PaymentRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import com.euroloans.eindopdracht.security.UserIdentification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class InvestmentService {
