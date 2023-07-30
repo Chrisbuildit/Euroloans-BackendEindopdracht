@@ -31,12 +31,13 @@ public class LoanService {
     }
 
     public Loan createLoan(LoanDto loanDto) {
-        Loan newLoan = new Loan();
-        LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).orElseThrow(() ->
-                new ResourceNotFoundException("LoanRequest not Found"));
+        Loan loan = new Loan();
 
         UserIdentification userIdentification = new UserIdentification(userRepository);
         User user = userIdentification.getCurrentUser();
+
+        LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).orElseThrow(() ->
+                new ResourceNotFoundException("LoanRequest not Found"));
 
         Iterable<Investment> investments = investmentRepository.findByLoanRequestId(loanRequest.getId());
         int totalInvestmentBalance = 0;
@@ -46,16 +47,16 @@ public class LoanService {
 
         if(loanRequest.isApproved == Boolean.TRUE) {
         if(totalInvestmentBalance==loanRequest.getAmount()) {
-            newLoan.setLoanRequest(loanRequest);
-            newLoan.setBalance(loanRequest.getAmount());
-            newLoan.addUsers(user);
+            loan.setLoanRequest(loanRequest);
+            loan.setBalance(loanRequest.getAmount());
+            loan.addUsers(user);
             for (Investment investment : investments) {
                 //Example of implementing One-To-Many relationship. The many side contains the one-side
-                investment.setLoans(newLoan);
+                investment.setLoans(loan);
             }
-            loanRepository.save(newLoan);
+            loanRepository.save(loan);
 
-            return newLoan;
+            return loan;
         } else {
             throw new ResourceNotFoundException("The available funding does not match the loanAmount requested");
         }

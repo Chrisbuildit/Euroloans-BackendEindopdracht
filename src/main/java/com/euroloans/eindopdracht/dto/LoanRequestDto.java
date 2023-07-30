@@ -16,10 +16,11 @@ public class LoanRequestDto {
     public String name;
     public Integer amount;
     public Boolean isApproved;
+    public Long fileId;
 
     public String usernameId;
 
-    public Map<String, Map<String, String>> usernameIds;
+    public Map<String, User> users;
 
     public String getName() {
         return name;

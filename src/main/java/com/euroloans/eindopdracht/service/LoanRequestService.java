@@ -2,9 +2,11 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
+import com.euroloans.eindopdracht.model.File;
 import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.repository.FileRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.security.UserIdentification;
@@ -17,16 +19,19 @@ public class LoanRequestService {
     private final LoanRequestRepository loanRequestRepos;
     private final UserRepository userRepos;
 
-    public LoanRequestService(LoanRequestRepository loanRequestRepos, UserRepository userRepos) {
+    private final FileRepository fileRepos;
+
+    public LoanRequestService(LoanRequestRepository loanRequestRepos, UserRepository userRepos, FileRepository fileRepos) {
         this.loanRequestRepos = loanRequestRepos;
         this.userRepos = userRepos;
+        this.fileRepos = fileRepos;
     }
 
     public LoanRequest createLoanRequest(LoanRequestDto loanRequestDto) {
         LoanRequest loanRequest = new LoanRequest();
         loanRequest.setName(loanRequestDto.name);
         loanRequest.setAmount(loanRequestDto.amount);
-        loanRequest.setApproved((loanRequestDto.isApproved));
+        loanRequest.setIsApproved((loanRequestDto.isApproved));
         loanRequest.setUsernameId("Not applicable");
 
         User user = userRepos.findById(loanRequestDto.usernameId).orElseThrow(() ->
@@ -35,6 +40,10 @@ public class LoanRequestService {
         if (role.getRolename().equals("ROLE_BORROWER")) {
             loanRequest.addUsers("Borrower", user);
         }
+
+        File file = fileRepos.findById(loanRequestDto.fileId).orElseThrow(() ->
+                new ResourceNotFoundException("You first need to upload a bankstatement in pdf"));
+        loanRequest.setFile(file);
         loanRequestRepos.save(loanRequest);
 
         return loanRequest;
@@ -86,7 +95,7 @@ public class LoanRequestService {
 
             if (user.getRole().getRolename().equals("ROLE_EMPLOYEE")) {
 
-                updatedLoanRequest.setApproved(loanRequestDto.isApproved);
+                updatedLoanRequest.setIsApproved(loanRequestDto.isApproved);
                 updatedLoanRequest.setAmount(loanRequest.getAmount());
                 updatedLoanRequest.addUsers("Employee", user);
 
@@ -95,7 +104,7 @@ public class LoanRequestService {
                         && (loanRequest.getUsers().containsValue(user)) || loanRequest.getUsers().containsKey("test")) {
 
                     updatedLoanRequest.setAmount(loanRequestDto.amount);
-                    updatedLoanRequest.setApproved(loanRequest.getApproved());
+                    updatedLoanRequest.setIsApproved(false);
                 } else {
                     throw new ResourceNotFoundException("You do not have access");
                 }
@@ -120,7 +129,11 @@ public class LoanRequestService {
         LoanRequest loanRequest  = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 
         if (loanRequest.getUsers().containsKey("test")||loanRequest.getUsers().containsValue(user)) {
-            loanRequestRepos.deleteById(id);
+            if(!loanRequest.isApproved) {
+                loanRequestRepos.deleteById(id);
+                } else {
+                    throw new ResourceNotFoundException("You can't delete the request as it has already been approved");
+                }
             } else {
                 throw new ResourceNotFoundException("You do not have access");
             }
@@ -130,19 +143,14 @@ public class LoanRequestService {
         LoanRequestDto loanRequestDto = new LoanRequestDto();
         loanRequestDto.id = loanRequest.getId();
         loanRequestDto.name = loanRequest.getName();
-        loanRequestDto.isApproved = loanRequest.getApproved();
+        loanRequestDto.isApproved = loanRequest.getIsApproved();
         loanRequestDto.usernameId = "Not applicable";
         loanRequestDto.amount = loanRequest.getAmount();
+        loanRequestDto.users = loanRequest.getUsers();
 
-        //Gives wrong username
-        Map<String , Map<String, String>> map = new HashMap<>();
-        Map<String , String> innermap = new HashMap<>();
-        for (Map.Entry<String, User> set : loanRequest.getUsers().entrySet()) {
-            innermap.put("username", set.getValue().getUsername());
-            map.put(set.getValue().getRole().getRolename(), innermap);
+        if(loanRequest.getFile() != null) {
+            loanRequestDto.fileId = loanRequest.getFile().getId();
         }
-
-        loanRequestDto.usernameIds = map;
 
         return loanRequestDto;
     }

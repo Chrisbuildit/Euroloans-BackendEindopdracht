@@ -1,7 +1,6 @@
 package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.AuthDto;
-import com.euroloans.eindopdracht.security.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

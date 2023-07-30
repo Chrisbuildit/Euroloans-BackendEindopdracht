@@ -27,24 +27,24 @@ public class UserIdentification {
         String currentUserName;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        User currentuser;
+        User currentUser;
         if (!(authentication instanceof AnonymousAuthenticationToken) && authentication!=null) {
 
             currentUserName = authentication.getName();
 
-            currentuser = userRepos.findById(currentUserName).orElseThrow(() -> new ResourceNotFoundException("User not Found"));
+            currentUser = userRepos.findById(currentUserName).orElseThrow(() -> new ResourceNotFoundException("User not Found"));
 
         } else if(authentication==null) {
             Role role = new Role();
             role.setRolename("ROLE_BORROWER");
 
-            currentuser = new User();
-            currentuser.setUsername("test");
-            currentuser.setRole(role);
+            currentUser = new User();
+            currentUser.setUsername("test");
+            currentUser.setRole(role);
         } else {
             throw new ResourceNotFoundException("User no longer exist");
         }
-        return currentuser;
+        return currentUser;
     }
 
 }

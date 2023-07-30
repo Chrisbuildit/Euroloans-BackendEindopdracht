@@ -1,6 +1,8 @@
 package com.euroloans.eindopdracht.security;
 
+import com.euroloans.eindopdracht.Filter.JwtRequestFilter;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import com.euroloans.eindopdracht.service.JwtService;
 import com.euroloans.eindopdracht.service.MyUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,23 +54,31 @@ public class SecurityConfig  {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests()
+                //User Endpoints
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/username").permitAll()
                 .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
+                //Role Endpoint
                 .requestMatchers("/roles").hasRole("OWNER")
+                //Authentication Endpoint
                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
+                //LoanRequests Endpoints
                 .requestMatchers(HttpMethod.POST, "/loanRequests").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.PUT, "/loanRequests").hasAnyRole("EMPLOYEE", "BORROWER")
-                .requestMatchers(HttpMethod.DELETE, "/loanRequests").hasAnyRole("EMPLOYEE", "BORROWER")
+                .requestMatchers(HttpMethod.DELETE, "/loanRequests").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.GET, "/loanRequests").permitAll()
+                //Loans Endpoints
                 .requestMatchers(HttpMethod.POST, "/loans").hasRole("EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/loan").hasRole("BORROWER")
-                .requestMatchers(HttpMethod.GET, "/loans").hasAnyRole("EMPLOYEE", "LENDER", "OWNER")
+                .requestMatchers(HttpMethod.GET, "/loan").hasAnyRole("BORROWER", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/loans").hasAnyRole("EMPLOYEE", "OWNER")
+                //Payment Endpoints
                 .requestMatchers(HttpMethod.GET, "/payments").hasAnyRole("EMPLOYEE", "OWNER")
                 .requestMatchers(HttpMethod.POST, "/payments").hasAnyRole("BORROWER", "LENDER")
                 .requestMatchers(HttpMethod.PUT, "/payments").hasRole("EMPLOYEE")
+                //Investment Endpoints
                 .requestMatchers(HttpMethod.POST, "/investments").hasRole("EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/investments").hasAnyRole("OWNER", "LENDER")
+                .requestMatchers(HttpMethod.GET, "/investments").hasAnyRole("OWNER", "LENDER", "EMPLOYEE")
+                //File Endpoint
                 .requestMatchers(HttpMethod.POST, "/single/uploadDb").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.GET, "/downloadFromDb/{fileId}").hasRole("EMPLOYEE")
 

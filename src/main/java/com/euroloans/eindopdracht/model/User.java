@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,10 +15,9 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name="users")
-public class User {
+public class User implements Serializable {
     @Id
-    //Werk nie
-    @Column(unique=true, name = "id")
+    @Column(name = "id")
     private String username;
 
     @JsonIgnore
@@ -25,7 +25,7 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "roles_id")
-    public Role role;
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -44,9 +44,4 @@ public class User {
     @JsonIgnore
     private Collection<Loan> loans;
 
-//    public User(String username, String password, Role role) {
-//        this.username = username;
-//        this.password = password;
-//        this.role = role;
-//    }
 }

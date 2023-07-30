@@ -1,4 +1,4 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import io.jsonwebtoken.Claims;

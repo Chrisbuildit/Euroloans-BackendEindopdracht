@@ -18,16 +18,13 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    private final LoanRepository loanRepository;
-
     private final LoanRequestRepository loanRequestRepository;
 
     private final InvestmentRepository investmentRepository;
 
-    public PaymentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRepository loanRepository, LoanRequestRepository loanRequestRepository, InvestmentRepository investmentRepository) {
+    public PaymentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRequestRepository loanRequestRepository, InvestmentRepository investmentRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
-        this.loanRepository = loanRepository;
         this.loanRequestRepository = loanRequestRepository;
         this.investmentRepository = investmentRepository;
     }

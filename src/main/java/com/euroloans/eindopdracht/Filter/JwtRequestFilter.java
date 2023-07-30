@@ -1,5 +1,6 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.Filter;
 
+import com.euroloans.eindopdracht.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

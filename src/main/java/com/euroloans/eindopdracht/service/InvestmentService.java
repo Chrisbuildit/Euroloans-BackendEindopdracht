@@ -34,11 +34,11 @@ public class InvestmentService {
     public Investment createInvestment(InvestmentDto investmentDto) {
         Investment investment = new Investment();
 
-        User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
-                new ResourceNotFoundException("User not Found"));
-
         UserIdentification userIdentification = new UserIdentification(userRepository);
         User employee = userIdentification.getCurrentUser();
+
+        User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
+                new ResourceNotFoundException("User not Found"));
 
         List<Payment> investmentPayment = new ArrayList<>();
         for (Long paymentId : investmentDto.paymentList) {

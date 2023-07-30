@@ -1,9 +1,11 @@
 package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.LoanRequestDto;
+import com.euroloans.eindopdracht.model.File;
 import com.euroloans.eindopdracht.model.LoanRequest;
 import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.repository.FileRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.security.UserIdentification;
@@ -33,6 +35,9 @@ class LoanRequestServiceUnitTest {
     @Mock
     LoanRequestRepository loanRequestRepository;
 
+    @Mock
+    FileRepository fileRepository;
+
     @InjectMocks
     LoanRequestService service;
 
@@ -45,6 +50,8 @@ class LoanRequestServiceUnitTest {
 
     User user1;
     Role role1;
+
+    File file;
 
     Map<String, User> users;
 
@@ -59,6 +66,7 @@ class LoanRequestServiceUnitTest {
         loanRequestDto.usernameId = "test";
         loanRequestDto.amount = 10;
         loanRequestDto.isApproved = false;
+        loanRequestDto.fileId = 1L;
 
         role1 = new Role();
         role1.setRolename("ROLE_BORROWER");
@@ -76,19 +84,23 @@ class LoanRequestServiceUnitTest {
         loanRequest1.setId(1L);
         loanRequest1.setName("test");
         loanRequest1.setAmount(10);
-        loanRequest1.setApproved(false);
+        loanRequest1.setIsApproved(false);
         loanRequest1.setUsers(users);
+
+        file = new File();
+        file.setId(1L);
     }
 
     @Test
     void createLoanRequest() {
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
+        when(fileRepository.findById(anyLong())).thenReturn(Optional.of(file));
 
         LoanRequest result = service.createLoanRequest(loanRequestDto);
 
         assertEquals("test", result.getName());
         assertEquals(10, result.getAmount());
-        assertEquals(false, result.getApproved());
+        assertEquals(false, result.getIsApproved());
         //Werk nie
 //        assertEquals(values, result.getUsers().values());
     }
@@ -104,7 +116,7 @@ class LoanRequestServiceUnitTest {
 
         assertEquals("test", result.getName());
         assertEquals(10, result.getAmount());
-        assertEquals(false, result.getApproved());
+        assertEquals(false, result.getIsApproved());
     }
 
     @Test
