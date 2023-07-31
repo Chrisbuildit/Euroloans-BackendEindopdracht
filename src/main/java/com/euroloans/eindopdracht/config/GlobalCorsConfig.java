@@ -1,4 +1,4 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

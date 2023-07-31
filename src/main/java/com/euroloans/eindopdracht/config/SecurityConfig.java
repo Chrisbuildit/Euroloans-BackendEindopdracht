@@ -1,4 +1,4 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.config;
 
 import com.euroloans.eindopdracht.Filter.JwtRequestFilter;
 import com.euroloans.eindopdracht.repository.UserRepository;

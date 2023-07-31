@@ -2,7 +2,7 @@ package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.UserRepository;
-import com.euroloans.eindopdracht.security.MyUserDetails;
+import com.euroloans.eindopdracht.details.MyUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

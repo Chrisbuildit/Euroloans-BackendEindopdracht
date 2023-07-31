@@ -1,6 +1,5 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.details;
 
-import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
