@@ -8,6 +8,7 @@ import com.euroloans.eindopdracht.repository.LoanRepository;
 import com.euroloans.eindopdracht.repository.PaymentRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.security.UserIdentification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,22 +21,19 @@ public class InvestmentService {
 
     private final PaymentRepository paymentRepository;
 
-    private final LoanRepository loanRepository;
-
     private final InvestmentRepository investmentRepository;
 
-    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRepository loanRepository, InvestmentRepository investmentRepository) {
+    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, InvestmentRepository investmentRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
-        this.loanRepository = loanRepository;
         this.investmentRepository = investmentRepository;
     }
 
     public Investment createInvestment(InvestmentDto investmentDto) {
         Investment investment = new Investment();
 
-        UserIdentification userIdentification = new UserIdentification(userRepository);
-        User employee = userIdentification.getCurrentUser();
+        User employee = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
         User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
                 new ResourceNotFoundException("User not Found"));

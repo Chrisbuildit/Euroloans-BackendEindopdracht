@@ -10,6 +10,7 @@ import com.euroloans.eindopdracht.repository.FileRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.security.UserIdentification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -52,10 +53,8 @@ public class LoanRequestService {
     public LoanRequestDto getLoanRequest(Long id) {
         LoanRequest l = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 
-        UserIdentification userIdentification = new UserIdentification(userRepos);
-        User user = userIdentification.getCurrentUser();
-
-            User currentuser = userRepos.findById(user.getUsername()).orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+        User currentuser = userRepos.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
             if (currentuser.getRole().getRolename().equals("ROLE_BORROWER")) {
 
@@ -88,8 +87,8 @@ public class LoanRequestService {
 
             LoanRequest updatedLoanRequest = new LoanRequest();
 
-            UserIdentification userIdentification = new UserIdentification(userRepos);
-            User user = userIdentification.getCurrentUser();
+            User user = userRepos.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                    orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
             updatedLoanRequest.setUsers(loanRequest.getUsers());
 
@@ -123,8 +122,8 @@ public class LoanRequestService {
         }
 
     public void deleteLoanRequest(Long id) {
-        UserIdentification userIdentification = new UserIdentification(userRepos);
-        User user = userIdentification.getCurrentUser();
+        User user = userRepos.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
         LoanRequest loanRequest  = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 

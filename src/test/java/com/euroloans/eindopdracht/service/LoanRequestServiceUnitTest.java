@@ -15,6 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.*;
@@ -40,9 +44,6 @@ class LoanRequestServiceUnitTest {
 
     @InjectMocks
     LoanRequestService service;
-
-    @Mock
-    UserIdentification userIdentification;
 
     LoanRequest loanRequest1;
 
@@ -74,6 +75,7 @@ class LoanRequestServiceUnitTest {
         user1 = new User();
         user1.setUsername("test");
         user1.setRole(role1);
+        user1.setPassword("test");
 
         users = new HashMap<>();
         users.put("test", user1);
@@ -89,10 +91,13 @@ class LoanRequestServiceUnitTest {
 
         file = new File();
         file.setId(1L);
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user1.getUsername(), user1.getPassword()));
     }
 
     @Test
-    void createLoanRequest() {
+    void createLoanRequestTest() {
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
         when(fileRepository.findById(anyLong())).thenReturn(Optional.of(file));
 
@@ -106,11 +111,10 @@ class LoanRequestServiceUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "test", password = "Confidential", roles = "ROLE_BORROWER")
-    void updateLoan() {
+//    @WithMockUser(username = "test", password = "Confidential", roles = "ROLE_BORROWER")
+    void updateLoanTest() {
         when(loanRequestRepository.findById(anyLong())).thenReturn(Optional.of(loanRequest1));
-        //Nie gewenste effek - SME'r weet ook niet waarom
-//        when(userIdentification.getCurrentUser()).thenReturn(user1);
+        when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
 
         LoanRequest result = service.updateLoan(loanRequestDto.id, loanRequestDto);
 
@@ -120,8 +124,9 @@ class LoanRequestServiceUnitTest {
     }
 
     @Test
-    void deleteLoanRequest() {
+    void deleteLoanRequestTest() {
         when(loanRequestRepository.findById(loanRequest1.getId())).thenReturn(Optional.of(loanRequest1));
+        when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
 
         service.deleteLoanRequest(loanRequest1.getId());
 
@@ -130,7 +135,7 @@ class LoanRequestServiceUnitTest {
     }
 
     @Test
-    void transferToDto() {
+    void transferToDtoTest() {
 
         LoanRequestDto loanRequestDtoResult = service.transferToDto(loanRequest1);
 

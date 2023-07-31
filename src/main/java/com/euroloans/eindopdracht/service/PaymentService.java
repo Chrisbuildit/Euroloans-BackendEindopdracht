@@ -5,6 +5,7 @@ import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.*;
 import com.euroloans.eindopdracht.security.UserIdentification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,8 +37,9 @@ public class PaymentService {
         payment.setAmount(paymentDto.amount);
         payment.setPaymentReference(paymentDto.paymentReference);
 
-        UserIdentification userIdentification = new UserIdentification(userRepository);
-        User user = userIdentification.getCurrentUser();
+        User user = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+
         payment.setUser(user);
 
         Role role = user.getRole();

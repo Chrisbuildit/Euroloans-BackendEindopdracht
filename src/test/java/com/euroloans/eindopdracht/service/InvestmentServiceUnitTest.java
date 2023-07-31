@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -43,9 +45,7 @@ class InvestmentServiceUnitTest {
     InvestmentDto investmentDtoCreated;
 
     Role role1;
-    Role role2;
     User user1;
-    User user2;
     LoanRequest loanRequest1;
     Payment payment1;
 
@@ -66,18 +66,10 @@ class InvestmentServiceUnitTest {
         role1 = new Role();
         role1.setRolename("ROLE_LENDER");
 
-//        role2 = new Role();
-//        role2.setRolename("ROLE_LENDER");
-
         user1 = new User();
         user1.setUsername("Roel");
         user1.setPassword("Confidential");
         user1.setRole(role1);
-
-//        user2 = new User();
-//        user2.setUsername("Roel");
-//        user2.setPassword("Confidential");
-//        user2.setRole(role2);
 
         Collection<User> users = new ArrayList<>();
         users.add(user1);
@@ -108,6 +100,9 @@ class InvestmentServiceUnitTest {
         investment2.setLoanRequestId(1L);
         investment2.setUsers(users);
         investment2.setPayments(payments);
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user1.getUsername(), user1.getPassword()));
     }
 
     @Test

@@ -8,6 +8,7 @@ import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.security.UserIdentification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,8 +34,8 @@ public class LoanService {
     public Loan createLoan(LoanDto loanDto) {
         Loan loan = new Loan();
 
-        UserIdentification userIdentification = new UserIdentification(userRepository);
-        User user = userIdentification.getCurrentUser();
+        User user = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
         LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).orElseThrow(() ->
                 new ResourceNotFoundException("LoanRequest not Found"));

@@ -31,15 +31,15 @@ class UserServiceUnitTest {
     @Mock
     RoleRepository roleRepos;
 
-    @Mock
-    PasswordEncoder encoder;
-
     @InjectMocks
     UserService service;
 
-    public PasswordEncoder passwordEncoder(String password) {
-        return new BCryptPasswordEncoder();
-    }
+//    @Mock
+//    PasswordEncoder encoder;
+
+//    public PasswordEncoder passwordEncoder(String password) {
+//        return new BCryptPasswordEncoder();
+//    }
 
     User user1;
     UserDto userDto1;
