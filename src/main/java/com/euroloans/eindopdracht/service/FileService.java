@@ -5,19 +5,11 @@ import com.euroloans.eindopdracht.model.File;
 import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.FileRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
-import com.euroloans.eindopdracht.security.UserIdentification;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.header.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class FileService {

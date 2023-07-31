@@ -9,7 +9,6 @@ import com.euroloans.eindopdracht.model.User;
 import com.euroloans.eindopdracht.repository.FileRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
-import com.euroloans.eindopdracht.security.UserIdentification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
