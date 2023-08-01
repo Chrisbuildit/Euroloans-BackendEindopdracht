@@ -23,9 +23,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/username")
-    public ResponseEntity<Object> getUser(@RequestParam String username) {
-        return ResponseEntity.ok(userService.getUser(username));
+    @GetMapping("/users/{id}")
+    public ResponseEntity<Object> getUser(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUser(id));
     }
 
     @GetMapping("/users")

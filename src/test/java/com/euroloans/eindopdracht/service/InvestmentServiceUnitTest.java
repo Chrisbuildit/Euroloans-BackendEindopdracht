@@ -36,9 +36,6 @@ class InvestmentServiceUnitTest {
     @Mock
     InvestmentRepository investmentRepository;
 
-    @Mock
-    LoanRepository loanRepository;
-
     @InjectMocks
     InvestmentService service;
 

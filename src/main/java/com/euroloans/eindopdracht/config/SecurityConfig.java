@@ -56,8 +56,8 @@ public class SecurityConfig  {
                 .authorizeHttpRequests()
                 //User Endpoints
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                .requestMatchers(HttpMethod.GET, "/username").permitAll()
-                .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/username").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/users").hasRole("OWNER")
                 //Role Endpoint
                 .requestMatchers("/roles").hasRole("OWNER")
                 //Authentication Endpoint
@@ -67,17 +67,20 @@ public class SecurityConfig  {
                 .requestMatchers(HttpMethod.PUT, "/loanRequests").hasAnyRole("EMPLOYEE", "BORROWER")
                 .requestMatchers(HttpMethod.DELETE, "/loanRequests").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.GET, "/loanRequests").permitAll()
+                .requestMatchers(HttpMethod.GET, "/loanRequests/{id}").permitAll()
                 //Loans Endpoints
                 .requestMatchers(HttpMethod.POST, "/loans").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/loan").hasAnyRole("BORROWER", "EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/loans").hasAnyRole("EMPLOYEE", "OWNER")
+                .requestMatchers(HttpMethod.GET, "/loans").hasAnyRole("OWNER")
                 //Payment Endpoints
                 .requestMatchers(HttpMethod.GET, "/payments").hasAnyRole("EMPLOYEE", "OWNER")
+                .requestMatchers(HttpMethod.GET, "/payments/{id}").hasAnyRole("EMPLOYEE", "OWNER")
                 .requestMatchers(HttpMethod.POST, "/payments").hasAnyRole("BORROWER", "LENDER")
                 .requestMatchers(HttpMethod.PUT, "/payments").hasRole("EMPLOYEE")
                 //Investment Endpoints
                 .requestMatchers(HttpMethod.POST, "/investments").hasRole("EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/investments").hasAnyRole("OWNER", "LENDER", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/investments").hasAnyRole("OWNER")
+                .requestMatchers(HttpMethod.GET, "/investments/{id}").hasAnyRole("OWNER", "LENDER")
                 //File Endpoint
                 .requestMatchers(HttpMethod.POST, "/single/uploadDb").hasRole("BORROWER")
                 .requestMatchers(HttpMethod.GET, "/downloadFromDb/{fileId}").hasRole("EMPLOYEE")
