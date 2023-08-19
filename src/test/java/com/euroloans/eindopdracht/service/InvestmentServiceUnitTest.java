@@ -36,6 +36,9 @@ class InvestmentServiceUnitTest {
     @Mock
     InvestmentRepository investmentRepository;
 
+    @Mock
+    LoanRequestRepository loanRequestRepository;
+
     @InjectMocks
     InvestmentService service;
 
@@ -59,6 +62,7 @@ class InvestmentServiceUnitTest {
         investmentDtoCreated.investmentId = 1L;
         investmentDtoCreated.usernameId = "LENDER";
         investmentDtoCreated.paymentList = paymentList;
+        investmentDtoCreated.loanRequestId = 1L;
 
         role1 = new Role();
         role1.setRolename("ROLE_LENDER");
@@ -73,6 +77,8 @@ class InvestmentServiceUnitTest {
 
         loanRequest1 = new LoanRequest();
         loanRequest1.setId(1L);
+        loanRequest1.setIsApproved(true);
+        loanRequest1.setOutstanding(10);
 
         payment1 = new Payment();
         payment1.setPaymentId(1L);
@@ -106,6 +112,7 @@ class InvestmentServiceUnitTest {
     void createInvestment() {
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
         when(paymentRepository.findById(anyLong())).thenReturn(Optional.of(payment1));
+        when(loanRequestRepository.findById(anyLong())).thenReturn(Optional.of(loanRequest1));
 
         Investment result = service.createInvestment(investmentDtoCreated);
 

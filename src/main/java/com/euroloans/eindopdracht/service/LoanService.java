@@ -50,6 +50,7 @@ public class LoanService {
             loan.setLoanRequest(loanRequest);
             loan.setBalance(loanRequest.getAmount());
             loan.addUsers(user);
+            loanRequest.setIsFunded(true);
             for (Investment investment : investments) {
                 //Example of implementing One-To-Many relationship. The many side contains the one-side
                 investment.setLoans(loan);

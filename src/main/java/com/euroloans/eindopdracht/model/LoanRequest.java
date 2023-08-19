@@ -26,6 +26,10 @@ public class LoanRequest {
 
     private Integer amount;
 
+    private Integer outstanding;
+
+    private Boolean isFunded;
+
     @Transient
     private String usernameId;
 
@@ -46,6 +50,10 @@ public class LoanRequest {
 
     public void addUsers(String string, User user) {
         users.put(string,user);
+    }
+
+    public void decreaseAmount(Integer i) {
+        outstanding = outstanding - i;
     }
 
 }

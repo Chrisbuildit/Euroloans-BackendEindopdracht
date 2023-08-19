@@ -4,6 +4,7 @@ import com.euroloans.eindopdracht.dto.InvestmentDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.InvestmentRepository;
+import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.PaymentRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +22,13 @@ public class InvestmentService {
 
     private final InvestmentRepository investmentRepository;
 
-    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, InvestmentRepository investmentRepository) {
+    private final LoanRequestRepository loanRequestRepository;
+
+    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, InvestmentRepository investmentRepository, LoanRequestRepository loanRequestRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         this.investmentRepository = investmentRepository;
+        this.loanRequestRepository = loanRequestRepository;
     }
 
     public Investment createInvestment(InvestmentDto investmentDto) {
@@ -36,20 +40,30 @@ public class InvestmentService {
         User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
                 new ResourceNotFoundException("User not Found"));
 
+        LoanRequest loanRequest = loanRequestRepository.findById(investmentDto.loanRequestId).orElseThrow(() ->
+                new ResourceNotFoundException("LoanRequest not Found"));
+
         List<Payment> investmentPayment = new ArrayList<>();
         for (Long paymentId : investmentDto.paymentList) {
             Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new ResourceNotFoundException("PaymentId not found"));
-            if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER") && payment.getAllocated().equals(false)) {
+            if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER") && payment.getAllocated().equals(false) && loanRequest.isApproved.equals(true)) {
                 investmentPayment.add(payment);
                 investment.increaseBalance(payment.getAmount());
                 investment.setLoanRequestId(payment.getLoanRequest().getId());
                 investment.addUsers(lender);
                 investment.addUsers(employee);
+                loanRequest.setOutstanding(loanRequest.getAmount());
+                loanRequest.decreaseAmount(payment.getAmount());
                 payment.setAllocated(true);
                 payment.setInvestmentId(investment.getInvestmentId());
 
                 investment.setPayments(investmentPayment);
                 investmentRepository.save(investment);
+                paymentRepository.save(payment);
+                loanRequestRepository.save(loanRequest);
+
+            } else {
+                throw new ResourceNotFoundException("You cannot create an investment");
             }
         }
             return investment;

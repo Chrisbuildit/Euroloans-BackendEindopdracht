@@ -18,7 +18,6 @@ import java.util.*;
 public class LoanRequestService {
     private final LoanRequestRepository loanRequestRepos;
     private final UserRepository userRepos;
-
     private final FileRepository fileRepos;
 
     public LoanRequestService(LoanRequestRepository loanRequestRepos, UserRepository userRepos, FileRepository fileRepos) {
@@ -50,20 +49,28 @@ public class LoanRequestService {
     }
 
     public LoanRequestDto getLoanRequest(Long id) {
-        LoanRequest l = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
+        LoanRequest loanRequest = loanRequestRepos.findById(id).orElseThrow(() -> new ResourceNotFoundException("loanRequest not Found"));
 
         User currentuser = userRepos.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
                 orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
 
             if (currentuser.getRole().getRolename().equals("ROLE_BORROWER")) {
 
-                if (l.getUsers().containsValue(currentuser)) {
-                    return transferToDto(l);
+                if (loanRequest.getUsers().containsValue(currentuser)) {
+                    return transferToDto(loanRequest);
                 } else {
                     throw new ResourceNotFoundException("You do not have access");
                 }
             } else {
-                return transferToDto(l);
+                if (currentuser.getRole().getRolename().equals("ROLE_LENDER")) {
+                    if(loanRequest.getIsApproved()) {
+                        return transferToDto(loanRequest);
+                    }
+                    else {
+                        throw new ResourceNotFoundException("The loanRequest is not approved");
+                    }
+                }
+                return transferToDto(loanRequest);
             }
     }
 
@@ -145,6 +152,8 @@ public class LoanRequestService {
         loanRequestDto.usernameId = "Not applicable";
         loanRequestDto.amount = loanRequest.getAmount();
         loanRequestDto.users = loanRequest.getUsers();
+        loanRequestDto.isFunded = loanRequest.getIsFunded();
+        loanRequestDto.outstanding = loanRequest.getOutstanding();
 
         if(loanRequest.getFile() != null) {
             loanRequestDto.fileId = loanRequest.getFile().getId();

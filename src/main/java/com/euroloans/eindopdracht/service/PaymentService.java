@@ -61,12 +61,14 @@ public class PaymentService {
 
         Iterable<Investment> investments = investmentRepository.findAll();
         Iterable<Payment> payments = paymentRepository.findAll();
+        Integer sumOfInvestments = 0;
         for (Investment investment : investments) {
             for (Payment payment : payments) {
                 //Matches payment with investment based on loanRequestId
                 if (Objects.equals(investment.getLoanRequestId(), payment.getLoanRequest().getId()) &&
                         payment.getAllocated().equals(false)) {
-                    if(investment.getLoans()!=null && Objects.equals(investment.getBalance(), investment.getLoans().getBalance())) {
+                    sumOfInvestments += investment.getBalance();
+                    if(investment.getLoans()!=null && Objects.equals(sumOfInvestments, investment.getLoans().getBalance())) {
                         payment.setLoanId(investment.getLoans().getLoanId());
                         payment.setInvestmentId(investment.getInvestmentId());
                         payment.setAllocated(true);
