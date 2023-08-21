@@ -142,7 +142,7 @@ class LoanRequestServiceUnitTest {
     }
 
     @Test
-    void getLoanRequest() {
+    void getLoanRequestTest() {
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
         when(loanRequestRepository.findById(anyLong())).thenReturn(Optional.of(loanRequest1));
 

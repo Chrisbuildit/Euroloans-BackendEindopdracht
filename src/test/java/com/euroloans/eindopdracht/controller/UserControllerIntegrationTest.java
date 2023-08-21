@@ -62,7 +62,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void shouldCreateUser() throws Exception {
+    void shouldCreateUserTest() throws Exception {
 
             mockMvc.perform(MockMvcRequestBuilders.post("/users", userDto)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +71,7 @@ class UserControllerIntegrationTest {
         }
 
     @Test
-    void getUser() throws Exception {
+    void getUserTest() throws Exception {
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/users/{id}", user.getUsername()))

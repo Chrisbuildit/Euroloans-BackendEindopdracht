@@ -82,7 +82,7 @@ class UserServiceUnitTest {
     }
 
     @Test
-    void createUser() {
+    void createUserTest() {
         when(roleRepos.findById(anyString())).thenReturn(Optional.of(role1));
 //        user1.setPassword(passwordEncoder(anyString()).encode("Confidential"));
 
@@ -93,7 +93,7 @@ class UserServiceUnitTest {
     }
 
     @Test
-    void getUser() {
+    void getUserTest() {
 
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
 
@@ -105,7 +105,7 @@ class UserServiceUnitTest {
     }
 
     @Test
-    void getAllUsers() {
+    void getAllUsersTest() {
         List<User> uList = new ArrayList<>();
         uList.add(user1);
         uList.add(user2);
