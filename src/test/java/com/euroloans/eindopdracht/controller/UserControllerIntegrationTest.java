@@ -1,19 +1,28 @@
 package com.euroloans.eindopdracht.controller;
 
+import com.euroloans.eindopdracht.dto.UserDto;
+import com.euroloans.eindopdracht.model.Role;
+import com.euroloans.eindopdracht.model.User;
+import com.euroloans.eindopdracht.repository.RoleRepository;
+import com.euroloans.eindopdracht.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -21,66 +30,66 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 class UserControllerIntegrationTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
+    @Autowired
+    UserRepository userRepos;
+    @Autowired
+    RoleRepository roleRepository;
 
-    @Test
-    void shouldCreateCorrectUser() throws Exception {
+    UserDto userDto;
 
-        String requestJson = """
-                {
-                    "username": "BOR",
-                    "password": "Confidential",
-                    "rolenameId": "ROLE_BORROWER",
-                    "loans" : ["1"]
-                }
-                """;
+    User user;
+    Role role;
 
-//        "loans": ["1"],
-//        "loanRequests": ["1"]
+    @BeforeEach
+    void setup() {
+        role = new Role();
+        role.setRolename("ROLE_BORROWER");
 
-        this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/username")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+        roleRepository.save(role);
+
+        user = new User();
+        user.setUsername("BOR");
+        user.setPassword("Confidential");
+        user.setRole(role);
+
+        userRepos.save(user);
+
+        userDto = new UserDto();
+        userDto.username = "Test";
+        userDto.password = "test";
+        userDto.rolenameId = "BORROWER";
     }
 
     @Test
-    void shouldGetCorrectUser() throws Exception {
-        String requestJson = """
-                {
-                    "username": "BOR",
-                    "password": "Confidential",
-                    "rolenameId": "ROLE_BORROWER",
-                    "loans": ["1"],
-                    "loanRequests": ["1"]
-                }
-                """;
+    void shouldCreateUser() throws Exception {
 
-        MvcResult postResult = this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/username")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson))
-                .andReturn();
+            mockMvc.perform(MockMvcRequestBuilders.post("/users", userDto)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(userDto)))
+                    .andExpect(status().isCreated());
+        }
 
-        String responseJson = postResult.getResponse().getContentAsString();
-//        String username = Integer.parseInt(responseJson);
+    @Test
+    void getUser() throws Exception {
 
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/username", responseJson))
+                .perform(MockMvcRequestBuilders.get("/users/{id}", user.getUsername()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username", is("BOR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.password", is("Confidential")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rolenameId", is("ROLE_BORROWER")));
-                .andExpect(MockMvcResultMatchers.jsonPath("$.loans", is("1")));
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.loanRequests", is(["1"])));
     }
 
-    @Test
-    void getAllUsers() {
+    public static String asJsonString(final Object obj) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-
 }

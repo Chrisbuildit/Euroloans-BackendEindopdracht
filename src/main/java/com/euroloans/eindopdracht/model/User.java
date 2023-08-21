@@ -2,10 +2,12 @@ package com.euroloans.eindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,16 +17,15 @@ import java.util.List;
 @Table(name="users")
 public class User {
     @Id
-    //Werk nie
-    @Column(unique=true, name = "id")
-    private String usernameId;
+    @Column(name = "id")
+    private String username;
 
     @JsonIgnore
     private String password;
 
     @OneToOne
     @JoinColumn(name = "roles_id")
-    public Role role;
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -42,6 +43,5 @@ public class User {
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private Collection<Loan> loans;
-
 
 }

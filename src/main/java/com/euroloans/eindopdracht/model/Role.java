@@ -2,6 +2,7 @@ package com.euroloans.eindopdracht.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
 import java.util.Collection;
 

@@ -16,6 +16,7 @@ public class LoanDto {
 
     public Integer balance;
 
+
     public List<Investment> investments;
 
     public Collection<User> usernameIds;

@@ -1,21 +1,17 @@
 package com.euroloans.eindopdracht.service;
 
 import com.euroloans.eindopdracht.dto.InvestmentDto;
-import com.euroloans.eindopdracht.dto.LoanDto;
-import com.euroloans.eindopdracht.dto.LoanRequestDto;
-import com.euroloans.eindopdracht.dto.PaymentDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.InvestmentRepository;
-import com.euroloans.eindopdracht.repository.LoanRepository;
+import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.PaymentRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class InvestmentService {
@@ -24,40 +20,50 @@ public class InvestmentService {
 
     private final PaymentRepository paymentRepository;
 
-    private final LoanRepository loanRepository;
-
     private final InvestmentRepository investmentRepository;
 
-    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, LoanRepository loanRepository, InvestmentRepository investmentRepository) {
+    private final LoanRequestRepository loanRequestRepository;
+
+    public InvestmentService(UserRepository userRepository, PaymentRepository paymentRepository, InvestmentRepository investmentRepository, LoanRequestRepository loanRequestRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
-        this.loanRepository = loanRepository;
         this.investmentRepository = investmentRepository;
+        this.loanRequestRepository = loanRequestRepository;
     }
 
     public Investment createInvestment(InvestmentDto investmentDto) {
         Investment investment = new Investment();
 
+        User employee = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+
         User lender = userRepository.findById(investmentDto.usernameId).orElseThrow(() ->
                 new ResourceNotFoundException("User not Found"));
 
-        UserIdentification userIdentification = new UserIdentification(userRepository);
-        User employee = userIdentification.getCurrentUser();
+        LoanRequest loanRequest = loanRequestRepository.findById(investmentDto.loanRequestId).orElseThrow(() ->
+                new ResourceNotFoundException("LoanRequest not Found"));
 
         List<Payment> investmentPayment = new ArrayList<>();
         for (Long paymentId : investmentDto.paymentList) {
             Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new ResourceNotFoundException("PaymentId not found"));
-            if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER") && payment.getAllocated().equals(false)) {
+            if (payment.getUser().getRole().getRolename().equals("ROLE_LENDER") && payment.getAllocated().equals(false) && loanRequest.isApproved.equals(true)) {
                 investmentPayment.add(payment);
                 investment.increaseBalance(payment.getAmount());
                 investment.setLoanRequestId(payment.getLoanRequest().getId());
                 investment.addUsers(lender);
                 investment.addUsers(employee);
+                loanRequest.setOutstanding(loanRequest.getAmount());
+                loanRequest.decreaseAmount(payment.getAmount());
                 payment.setAllocated(true);
                 payment.setInvestmentId(investment.getInvestmentId());
 
                 investment.setPayments(investmentPayment);
                 investmentRepository.save(investment);
+                paymentRepository.save(payment);
+                loanRequestRepository.save(loanRequest);
+
+            } else {
+                throw new ResourceNotFoundException("You cannot create an investment");
             }
         }
             return investment;
@@ -87,7 +93,7 @@ public class InvestmentService {
         investmentDto.loanRequestId = investment.getLoanRequestId();
 
         for (User user : investment.getUsers()) {
-            investmentDto.usernameId = user.getUsernameId();
+            investmentDto.usernameId = user.getUsername();
         }
 
         List<Long> payments = new ArrayList<>();
@@ -101,5 +107,5 @@ public class InvestmentService {
         }
 
         return investmentDto;
-    }
+        }
     }

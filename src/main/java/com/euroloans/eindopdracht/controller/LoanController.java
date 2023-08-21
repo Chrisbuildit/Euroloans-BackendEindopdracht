@@ -20,7 +20,7 @@ public class LoanController {
 
     @PostMapping("loans")
     public ResponseEntity<Loan> createLoan(@RequestBody LoanDto loanDto) {
-        return new ResponseEntity<>(loanService.createLoan(loanDto), HttpStatus.CREATED);
+            return new ResponseEntity<>(loanService.createLoan(loanDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/loan")

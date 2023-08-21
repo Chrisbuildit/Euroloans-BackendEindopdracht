@@ -31,7 +31,7 @@ public class LoanRequestController {
         return ResponseEntity.ok(loanRequestService.getAllLoanRequests());
     }
 
-    @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @PostMapping
     public ResponseEntity<LoanRequest> createLoanRequest(@RequestBody LoanRequestDto loanRequestDto) {
         return new ResponseEntity<>(loanRequestService.createLoanRequest(loanRequestDto), HttpStatus.CREATED);
     }

@@ -1,14 +1,13 @@
 package com.euroloans.eindopdracht.service;
 
-import com.euroloans.eindopdracht.dto.LoanRequestDto;
 import com.euroloans.eindopdracht.dto.LoanDto;
-import com.euroloans.eindopdracht.dto.UserDto;
 import com.euroloans.eindopdracht.exception.ResourceNotFoundException;
 import com.euroloans.eindopdracht.model.*;
 import com.euroloans.eindopdracht.repository.InvestmentRepository;
 import com.euroloans.eindopdracht.repository.LoanRequestRepository;
 import com.euroloans.eindopdracht.repository.LoanRepository;
 import com.euroloans.eindopdracht.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,12 +31,13 @@ public class LoanService {
     }
 
     public Loan createLoan(LoanDto loanDto) {
-        Loan newLoan = new Loan();
+        Loan loan = new Loan();
+
+        User user = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName()).
+                orElseThrow(() -> new ResourceNotFoundException("User no longer exist"));
+
         LoanRequest loanRequest = loanRequestRepository.findById(loanDto.loanRequestId).orElseThrow(() ->
                 new ResourceNotFoundException("LoanRequest not Found"));
-
-        UserIdentification userIdentification = new UserIdentification(userRepository);
-        User user = userIdentification.getCurrentUser();
 
         Iterable<Investment> investments = investmentRepository.findByLoanRequestId(loanRequest.getId());
         int totalInvestmentBalance = 0;
@@ -47,16 +47,17 @@ public class LoanService {
 
         if(loanRequest.isApproved == Boolean.TRUE) {
         if(totalInvestmentBalance==loanRequest.getAmount()) {
-            newLoan.setLoanRequest(loanRequest);
-            newLoan.setBalance(loanRequest.getAmount());
-            newLoan.addUsers(user);
+            loan.setLoanRequest(loanRequest);
+            loan.setBalance(loanRequest.getAmount());
+            loan.addUsers(user);
+            loanRequest.setIsFunded(true);
             for (Investment investment : investments) {
                 //Example of implementing One-To-Many relationship. The many side contains the one-side
-                investment.setLoans(newLoan);
+                investment.setLoans(loan);
             }
-            loanRepository.save(newLoan);
+            loanRepository.save(loan);
 
-            return newLoan;
+            return loan;
         } else {
             throw new ResourceNotFoundException("The available funding does not match the loanAmount requested");
         }

@@ -1,6 +1,5 @@
-package com.euroloans.eindopdracht.security;
+package com.euroloans.eindopdracht.details;
 
-import com.euroloans.eindopdracht.model.Role;
 import com.euroloans.eindopdracht.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,7 +33,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsernameId();
+        return user.getUsername();
     }
 
     @Override
