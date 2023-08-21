@@ -1,4 +1,4 @@
-package com.euroloans.eindopdracht.Filter;
+package com.euroloans.eindopdracht.filter;
 
 import com.euroloans.eindopdracht.service.JwtService;
 import jakarta.servlet.FilterChain;

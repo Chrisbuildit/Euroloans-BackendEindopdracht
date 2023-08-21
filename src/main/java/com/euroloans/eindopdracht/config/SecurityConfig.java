@@ -1,6 +1,6 @@
 package com.euroloans.eindopdracht.config;
 
-import com.euroloans.eindopdracht.Filter.JwtRequestFilter;
+import com.euroloans.eindopdracht.filter.JwtRequestFilter;
 import com.euroloans.eindopdracht.repository.UserRepository;
 import com.euroloans.eindopdracht.service.JwtService;
 import com.euroloans.eindopdracht.service.MyUserDetailsService;
