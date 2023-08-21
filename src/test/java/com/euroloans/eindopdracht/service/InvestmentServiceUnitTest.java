@@ -79,6 +79,7 @@ class InvestmentServiceUnitTest {
         loanRequest1.setId(1L);
         loanRequest1.setIsApproved(true);
         loanRequest1.setOutstanding(10);
+        loanRequest1.setAmount(1);
 
         payment1 = new Payment();
         payment1.setPaymentId(1L);
@@ -109,7 +110,7 @@ class InvestmentServiceUnitTest {
     }
 
     @Test
-    void createInvestment() {
+    void createInvestmentTest() {
         when(userRepos.findById(anyString())).thenReturn(Optional.of(user1));
         when(paymentRepository.findById(anyLong())).thenReturn(Optional.of(payment1));
         when(loanRequestRepository.findById(anyLong())).thenReturn(Optional.of(loanRequest1));
@@ -124,7 +125,7 @@ class InvestmentServiceUnitTest {
     }
 
     @Test
-    void getInvestment() {
+    void getInvestmentTest() {
         when(investmentRepository.findById(anyLong())).thenReturn(Optional.of(investment1));
 
         InvestmentDto investmentDto = service.getInvestment(investmentDtoCreated.investmentId);
@@ -136,7 +137,7 @@ class InvestmentServiceUnitTest {
     }
 
     @Test
-    void getAllInvestments() {
+    void getAllInvestmentsTest() {
         List<Investment> iList = new ArrayList<>();
         iList.add(investment1);
         iList.add(investment2);
